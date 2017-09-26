@@ -97,5 +97,4 @@ class SalaryMiner extends AbstractMiner {
         ]);
     }
 
-
 }
