@@ -7,9 +7,10 @@ use Illuminate\Support\Collection;
 interface RepositoryContract {
 
     /**
+     * @param array $filter
      * @return Collection
      */
-    public function all() : Collection;
+    public function all(array $filter = []) : Collection;
 
     /**
      * @param int $id

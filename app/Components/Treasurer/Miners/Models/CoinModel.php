@@ -50,14 +50,31 @@ class CoinModel extends Model implements CoinContract {
      */
     public function fill(array $input) : CoinContract
     {
-        return parent::fill($input);
+        parent::fill($input);
+
+        return $this;
     }
 
     /**
+     * @param array $filter
      * @return Collection
      */
-    public function getAll(): Collection
+    public function getAll(array $filter = []): Collection
     {
+        if ($filter) {
+            $query = self::newQuery();
+
+            collect($filter)->each(function($field, $condition) use ($query) {
+                if (array_get($condition, 'value')) {
+                    $query->{array_get($condition, 'function', 'where')}($field, array_get($condition, 'condition', '='), array_get($condition, 'value'));
+                } else {
+                    // todo: log this
+                }
+            });
+
+            return $query->get();
+        }
+
         return self::all();
     }
 
@@ -92,6 +109,22 @@ class CoinModel extends Model implements CoinContract {
     public function presentAsArray(): array
     {
         return $this->toArray();
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return strval($this->getAttribute('type'));
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmount(): float
+    {
+        return floatval($this->getAttribute('amount'));
     }
 
 }

@@ -23,9 +23,10 @@ class EloquentRepository implements RepositoryContract {
     }
 
     /**
+     * @param array $filter
      * @return Collection
      */
-    public function all(): Collection
+    public function all(array $filter = []): Collection
     {
         return $this->coin->getAll();
     }

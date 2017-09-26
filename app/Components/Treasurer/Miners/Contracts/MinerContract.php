@@ -3,6 +3,7 @@
 namespace App\Components\Treasurer\Miners\Contracts;
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 interface MinerContract {
 
@@ -26,5 +27,16 @@ interface MinerContract {
      * @return bool
      */
     public function refund(int $id) : bool;
+
+
+    /**
+     * @return float
+     */
+    public function loot() : float;
+
+    /**
+     * @return Collection
+     */
+    public function lootList() : Collection;
 
 }

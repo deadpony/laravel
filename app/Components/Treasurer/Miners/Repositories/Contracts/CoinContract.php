@@ -18,9 +18,10 @@ interface CoinContract {
     public function fill(array $input) : self ;
 
     /**
+     * @param array $filter
      * @return Collection
      */
-    public function getAll() : Collection;
+    public function getAll(array $filter = []) : Collection;
 
     /**
      * @param int $id
@@ -42,4 +43,14 @@ interface CoinContract {
      * @return array
      */
     public function presentAsArray() : array;
+
+    /**
+     * @return string
+     */
+    public function getType() : string;
+
+    /**
+     * @return float
+     */
+    public function getAmount() : float;
 }
