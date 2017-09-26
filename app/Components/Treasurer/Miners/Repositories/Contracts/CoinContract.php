@@ -15,7 +15,7 @@ interface CoinContract {
      * @param array $input
      * @return CoinContract
      */
-    public function fill(array $input) : self ;
+    public function fill(array $input) : self;
 
     /**
      * @param array $filter
