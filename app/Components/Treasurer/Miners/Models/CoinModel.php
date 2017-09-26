@@ -14,7 +14,18 @@ class CoinModel extends Model implements CoinContract {
      * @var array
      */
     protected $fillable = [
-        'type', 'amount',
+        'type', 'amount', 'created_at'
+    ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
 
     /**

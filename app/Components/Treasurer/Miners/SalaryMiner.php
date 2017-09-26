@@ -3,6 +3,7 @@
 namespace App\Components\Treasurer\Miners;
 
 use App\Components\Treasurer\Miners\Repositories\Contracts\RepositoryContract;
+use Carbon\Carbon;
 
 class SalaryMiner extends AbstractMiner {
 
@@ -24,14 +25,16 @@ class SalaryMiner extends AbstractMiner {
 
     /**
      * @param float $amount
+     * @param $date \Carbon\Carbon|null
      * @return bool
      */
-    public function earn(float $amount): bool
+    public function earn(float $amount, Carbon $date = null): bool
     {
         return $this->repository->create(
             [
-                'type'    => $this->getType(),
-                'amount'  => $amount,
+                'type'       => $this->getType(),
+                'amount'     => $amount,
+                'created_at' => $date ?? Carbon::now(),
             ]
         );
     }
@@ -39,15 +42,17 @@ class SalaryMiner extends AbstractMiner {
     /**
      * @param int $id
      * @param float $amount
+     * @param $date \Carbon\Carbon|null
      * @return bool
      */
-    public function change(int $id, float $amount): bool
+    public function change(int $id, float $amount, Carbon $date = null): bool
     {
         $record = $this->repository->find($id);
 
         return $this->repository->update($record, [
-            'type'    => $this->getType(),
-            'amount'  => $amount,
+            'type'       => $this->getType(),
+            'amount'     => $amount,
+            'created_at' => $date ?? Carbon::now(),
         ]);
     }
 

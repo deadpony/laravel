@@ -14,9 +14,5 @@
 Route::get('/', function () {
     $salary = app()->make(\App\Components\Treasurer\Miners\SalaryMiner::class);
 
-    $salary->earn(20);
-
-    $salary->change(1,50);
-
-    $salary->refund(2);
+    $salary->change(1,30, \Carbon\Carbon::createFromDate(2017, 8));
 });
