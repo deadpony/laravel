@@ -12,6 +12,5 @@
 */
 
 Route::get('/', function () {
-    $salary = app()->make(\App\Components\Treasurer\Miners\SalaryMiner::class);
 
 });

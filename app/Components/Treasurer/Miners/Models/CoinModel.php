@@ -64,7 +64,7 @@ class CoinModel extends Model implements CoinContract {
         if ($filter) {
             $query = self::newQuery();
 
-            collect($filter)->each(function($field, $condition) use ($query) {
+            collect($filter)->each(function($condition, $field) use ($query) {
                 if (array_get($condition, 'value')) {
                     $query->{array_get($condition, 'function', 'where')}($field, array_get($condition, 'condition', '='), array_get($condition, 'value'));
                 } else {
