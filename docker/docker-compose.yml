@@ -1,0 +1,71 @@
+version: '2'
+
+services:
+
+    applications:
+      image: tianon/true
+      volumes:
+        - ../:/var/www
+
+    workspace:
+      build:
+        context: ./workspace
+      volumes_from:
+        - applications
+      ports:
+        - "2000:22"
+      depends_on:
+        - percona
+      tty: true
+      networks:
+        - backend
+
+    percona:
+      build:
+        context: ./percona
+      environment:
+        - MYSQL_DATABASE=laravel
+        - MYSQL_USER=laravel
+        - MYSQL_PASSWORD=laravel
+        - MYSQL_ROOT_PASSWORD=root
+      volumes:
+        - ./data/percona:/var/lib/mysql
+      ports:
+        - "3306:3306"
+      depends_on:
+        - nginx
+      networks:
+        - backend
+
+    nginx:
+      build:
+        context: ./nginx
+      volumes_from:
+        - applications
+      volumes:
+        - ./logs/nginx/:/var/log/nginx
+        - ./nginx/sites/:/etc/nginx/sites-available
+      ports:
+        - "8080:8080"
+      depends_on:
+        - php-fpm
+      networks:
+        - backend
+
+    php-fpm:
+      build:
+        context: ./php-fpm
+      volumes_from:
+        - applications
+      expose:
+        - "9000"
+      networks:
+        - backend
+
+networks:
+  backend:
+    driver: "bridge"
+
+volumes:
+  percona:
+    driver: "local"
