@@ -26,7 +26,7 @@ interface ExpenseContract {
      * @param int $id
      * @return bool
      */
-    public function refund(int $id) : bool;
+    public function claim(int $id) : bool;
 
     /**
      * @return float

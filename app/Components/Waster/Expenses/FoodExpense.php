@@ -62,7 +62,7 @@ class FoodExpense extends AbstractExpense {
      * @param int $id
      * @return bool
      */
-    public function refund(int $id): bool
+    public function claim(int $id): bool
     {
         $coin = $this->repository->find($id);
 
