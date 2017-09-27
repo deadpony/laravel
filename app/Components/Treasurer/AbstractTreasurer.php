@@ -5,6 +5,8 @@ namespace App\Components\Treasurer;
 use App\Components\Treasurer\Contracts\TreasurerContract;
 
 use App\Components\Treasurer\Miners\Contracts\MinerContract;
+use App\Components\Treasurer\Miners\SalaryMiner;
+use App\Components\Treasurer\Miners\VariousMiner;
 use Illuminate\Support\Collection;
 
 /**
@@ -17,11 +19,16 @@ abstract class AbstractTreasurer implements TreasurerContract {
     /**
      * @var Collection
      */
-    protected $miners;
+    protected $miners = [
+        SalaryMiner::class,
+        VariousMiner::class,
+    ];
 
     public function __construct()
     {
-        $this->miners = collect();
+        $this->miners = collect($this->miners)->flip()->map(function($node, $miner) {
+            return app()->make($miner);
+        });
     }
 
     /**
@@ -29,38 +36,31 @@ abstract class AbstractTreasurer implements TreasurerContract {
      */
     public function miners(): Collection
     {
-        if ($this->miners->isEmpty()) {
-            // todo: init miners
-        }
-
         return $this->miners;
     }
 
     /**
      * @param MinerContract $miner
      */
-    private function setMiner($key, MinerContract $miner)
+    protected function setMiner(MinerContract $miner)
     {
-        $this->miners->put($key, $miner);
+        $this->miners->put(class_basename($miner), $miner);
+    }
+
+    /**
+     * @param MinerContract $miner
+     */
+    protected function unsetMiner(MinerContract $miner)
+    {
+        $this->miners->forget(class_basename($miner));
     }
 
     public function __call($method, $parameters)
     {
-        if (!$this->miners()->has($method)) {
-            $miner = "\\App\\Components\\Treasurer\\Miners\\" .ucfirst($method) . "Miner";
-            if (class_exists("{$miner}")) {
+        $miner = "App\\Components\\Treasurer\\Miners\\" .ucfirst($method) . "Miner";
 
-                $factory = app()->make($miner);
-
-                if ($factory instanceof MinerContract) {
-                    $this->setMiner($method, $factory);
-                } else {
-                    throw new \Exception('Not an instance of MinerContract');
-                }
-
-            } else {
-                throw new \Exception('Not implemented');
-            }
+        if (!$this->miners()->has($miner)) {
+            throw new \Exception('Not implemented');
         }
 
         return $this->miners()->get($method);

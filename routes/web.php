@@ -12,5 +12,6 @@
 */
 
 Route::get('/', function () {
-
+    $treasurer = new \App\Components\Treasurer\MasterTreasurer();
+    dd($treasurer->lootList());
 });
