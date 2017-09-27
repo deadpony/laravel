@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Components\Treasurer\Miners\Contracts;
+namespace App\Components\Waster\Expenses\Contracts;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
-interface MinerContract {
+interface ExpenseContract {
 
     /**
      * @param float $amount
      * @param $date \Carbon\Carbon|null
      * @return bool
      */
-    public function earn(float $amount, Carbon $date = null) : bool;
+    public function charge(float $amount, Carbon $date = null) : bool;
 
     /**
      * @param int $id
@@ -31,11 +31,11 @@ interface MinerContract {
     /**
      * @return float
      */
-    public function loot() : float;
+    public function costs() : float;
 
     /**
      * @return Collection
      */
-    public function lootList() : Collection;
+    public function costsList() : Collection;
 
 }

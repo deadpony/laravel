@@ -178,6 +178,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         App\Components\Treasurer\Miners\Provide\MinersServiceProvider::class,
+        App\Components\Waster\Expenses\Provide\ExpensesServiceProvider::class,
 
     ],
 

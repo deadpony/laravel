@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Components\Treasurer\Miners\Models;
+namespace App\Components\Waster\Expenses\Models;
 
-use App\Components\Treasurer\Miners\Repositories\Contracts\CoinContract;
+use App\Components\Waster\Expenses\Repositories\Contracts\CoinContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -33,7 +33,7 @@ class CoinModel extends Model implements CoinContract {
      *
      * @var string
      */
-    protected $table = 'treasure';
+    protected $table = 'expense';
 
 
     /**
