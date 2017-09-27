@@ -6,6 +6,9 @@ use App\Components\Waster\Contracts\WasterContract;
 use App\Components\Waster\Expenses\ApplianceExpense;
 use App\Components\Waster\Expenses\Contracts\ExpenseContract;
 use App\Components\Waster\Expenses\FoodExpense;
+use App\Components\Waster\Expenses\FunExpense;
+use App\Components\Waster\Expenses\HousekeepingExpense;
+use App\Components\Waster\Expenses\WearableExpense;
 use Illuminate\Support\Collection;
 
 /**
@@ -24,6 +27,9 @@ abstract class AbstractWaster implements WasterContract {
     protected $expenses = [
         FoodExpense::class,
         ApplianceExpense::class,
+        HousekeepingExpense::class,
+        FunExpense::class,
+        WearableExpense::class,
     ];
 
     public function __construct()
