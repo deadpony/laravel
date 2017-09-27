@@ -65,6 +65,6 @@ abstract class AbstractWaster implements WasterContract {
             throw new \Exception('Not implemented');
         }
 
-        return $this->expenses()->get($method);
+        return $this->expenses()->get($expense);
     }
 }

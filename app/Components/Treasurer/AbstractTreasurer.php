@@ -63,6 +63,6 @@ abstract class AbstractTreasurer implements TreasurerContract {
             throw new \Exception('Not implemented');
         }
 
-        return $this->miners()->get($method);
+        return $this->miners()->get($miner);
     }
 }
