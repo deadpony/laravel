@@ -30,9 +30,9 @@ interface AccountContract {
     public function find(int $id) : AccountContract;
 
     /**
-     * @return bool
+     * @return AccountContract
      */
-    public function performSave() : bool;
+    public function performSave() : AccountContract;
 
     /**
      * @return bool

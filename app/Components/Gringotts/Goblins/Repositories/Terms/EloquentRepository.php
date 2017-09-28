@@ -43,9 +43,9 @@ class EloquentRepository implements RepositoryContract
 
     /**
      * @param array $input
-     * @return bool
+     * @return TermContract
      */
-    public function create(array $input): bool
+    public function create(array $input): TermContract
     {
         return $this->term->scratch()->fill($input)->performSave();
     }
@@ -53,9 +53,9 @@ class EloquentRepository implements RepositoryContract
     /**
      * @param TermContract $record
      * @param array $input
-     * @return bool
+     * @return TermContract
      */
-    public function update(TermContract $record, array $input): bool
+    public function update(TermContract $record, array $input): TermContract
     {
         $this->term = $record;
         

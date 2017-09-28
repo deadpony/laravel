@@ -30,9 +30,9 @@ class CreditGoblin extends AbstractGoblin
     /**
      * @param float $amount
      * @param $date \Carbon\Carbon|null
-     * @return bool
+     * @return AccountContract
      */
-    public function open(float $amount, Carbon $date = null): bool
+    public function open(float $amount, Carbon $date = null): AccountContract
     {
         return $this->repository->create(
             [
@@ -47,9 +47,9 @@ class CreditGoblin extends AbstractGoblin
      * @param int $id
      * @param float $amount
      * @param $date \Carbon\Carbon|null
-     * @return bool
+     * @return AccountContract
      */
-    public function change(int $id, float $amount, Carbon $date = null): bool
+    public function change(int $id, float $amount, Carbon $date = null): AccountContract
     {
         $account = $this->repository->find($id);
 

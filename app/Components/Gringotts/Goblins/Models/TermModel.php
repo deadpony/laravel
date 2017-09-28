@@ -92,11 +92,13 @@ class TermModel extends Model implements TermContract, HasAccountContract
     }
 
     /**
-     * @return bool
+     * @return TermContract
      */
-    public function performSave(): bool
+    public function performSave(): TermContract
     {
-        return $this->save();
+        $this->save();
+
+        return $this;
     }
 
     /**

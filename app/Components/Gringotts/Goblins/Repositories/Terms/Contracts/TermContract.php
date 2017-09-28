@@ -31,9 +31,9 @@ interface TermContract {
     public function find(int $id) : TermContract;
 
     /**
-     * @return bool
+     * @return TermContract
      */
-    public function performSave() : bool;
+    public function performSave() : TermContract;
 
     /**
      * @return bool

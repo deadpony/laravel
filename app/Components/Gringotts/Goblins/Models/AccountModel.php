@@ -90,11 +90,13 @@ class AccountModel extends Model implements AccountContract, HasTermContract
     }
 
     /**
-     * @return bool
+     * @return AccountContract
      */
-    public function performSave(): bool
+    public function performSave(): AccountContract
     {
-        return $this->save();
+        $this->save();
+
+        return $this;
     }
 
     /**
