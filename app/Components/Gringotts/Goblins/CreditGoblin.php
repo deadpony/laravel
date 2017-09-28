@@ -5,8 +5,6 @@ namespace App\Components\Gringotts\Goblins;
 use App\Components\Gringotts\Goblins\Repositories\Accounts\Contracts\AccountContract;
 use App\Components\Gringotts\Goblins\Repositories\Accounts\Contracts\RepositoryContract;
 
-use \App\Components\Gringotts\Goblins\Repositories\Terms\Contracts\RepositoryContract as RepositoryOfTermsContract;
-
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -17,25 +15,14 @@ class CreditGoblin extends AbstractGoblin
      */
     private $repository;
 
-    /**
-     * @var RepositoryOfTermsContract
-     */
-    private $repositoryOfTerms;
-
-    /**
-     * @var array
-     */
-    private $term = [];
 
     /**
      * SalaryMiner constructor.
      * @param RepositoryContract $repository
-     * @param RepositoryOfTermsContract $repositoryOfTerms
      */
-    public function __construct(RepositoryContract $repository, RepositoryOfTermsContract $repositoryOfTerms)
+    public function __construct(RepositoryContract $repository)
     {
         $this->repository = $repository;
-        $this->repositoryOfTerms = $repositoryOfTerms;
 
         $this->setType('credit');
     }
