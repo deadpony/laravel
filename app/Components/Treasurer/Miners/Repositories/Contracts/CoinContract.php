@@ -7,15 +7,15 @@ use Illuminate\Support\Collection;
 interface CoinContract {
 
     /**
-     * @return self
+     * @return CoinContract
      */
-    public function scratch() : self;
+    public function scratch() : CoinContract;
 
     /**
      * @param array $input
      * @return CoinContract
      */
-    public function fill(array $input) : self;
+    public function fill(array $input) : CoinContract;
 
     /**
      * @param array $filter
@@ -25,14 +25,14 @@ interface CoinContract {
 
     /**
      * @param int $id
-     * @return self
+     * @return CoinContract
      */
-    public function find(int $id) : self;
+    public function find(int $id) : CoinContract;
 
     /**
-     * @return bool
+     * @return CoinContract
      */
-    public function performSave() : bool;
+    public function performSave() : CoinContract;
 
     /**
      * @return bool

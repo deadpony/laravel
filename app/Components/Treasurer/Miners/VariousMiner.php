@@ -28,9 +28,9 @@ class VariousMiner extends AbstractMiner {
     /**
      * @param float $amount
      * @param $date \Carbon\Carbon|null
-     * @return bool
+     * @return CoinContract
      */
-    public function earn(float $amount, Carbon $date = null): bool
+    public function earn(float $amount, Carbon $date = null): CoinContract
     {
         return $this->repository->create(
             [
@@ -45,9 +45,9 @@ class VariousMiner extends AbstractMiner {
      * @param int $id
      * @param float $amount
      * @param $date \Carbon\Carbon|null
-     * @return bool
+     * @return CoinContract
      */
-    public function change(int $id, float $amount, Carbon $date = null): bool
+    public function change(int $id, float $amount, Carbon $date = null): CoinContract
     {
         $coin = $this->repository->find($id);
 

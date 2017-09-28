@@ -2,6 +2,7 @@
 
 namespace App\Components\Treasurer\Miners\Contracts;
 
+use App\Components\Treasurer\Miners\Repositories\Contracts\CoinContract;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -10,17 +11,17 @@ interface MinerContract {
     /**
      * @param float $amount
      * @param $date \Carbon\Carbon|null
-     * @return bool
+     * @return CoinContract
      */
-    public function earn(float $amount, Carbon $date = null) : bool;
+    public function earn(float $amount, Carbon $date = null) : CoinContract;
 
     /**
      * @param int $id
      * @param float $amount
      * @param $date \Carbon\Carbon|null
-     * @return bool
+     * @return CoinContract
      */
-    public function change(int $id, float $amount, Carbon $date = null) : bool;
+    public function change(int $id, float $amount, Carbon $date = null) : CoinContract;
 
     /**
      * @param int $id
