@@ -42,9 +42,9 @@ class EloquentRepository implements RepositoryContract {
 
     /**
      * @param array $input
-     * @return bool
+     * @return CoinContract
      */
-    public function create(array $input): bool
+    public function create(array $input): CoinContract
     {
         return $this->coin->scratch()->fill($input)->performSave();
     }
@@ -52,9 +52,9 @@ class EloquentRepository implements RepositoryContract {
     /**
      * @param CoinContract $record
      * @param array $input
-     * @return bool
+     * @return CoinContract
      */
-    public function update(CoinContract $record, array $input): bool
+    public function update(CoinContract $record, array $input): CoinContract
     {
         $this->coin = $record;
         

@@ -88,11 +88,13 @@ class CoinModel extends Model implements CoinContract {
     }
 
     /**
-     * @return bool
+     * @return CoinContract
      */
-    public function performSave(): bool
+    public function performSave(): CoinContract
     {
-        return $this->save();
+        $this->save();
+
+        return $this;
     }
 
     /**

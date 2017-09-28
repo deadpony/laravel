@@ -20,16 +20,16 @@ interface RepositoryContract {
 
     /**
      * @param array $input
-     * @return bool
+     * @return CoinContract
      */
-    public function create(array $input) : bool;
+    public function create(array $input) : CoinContract;
 
     /**
      * @param CoinContract $record
      * @param array $input
-     * @return bool
+     * @return CoinContract
      */
-    public function update(CoinContract $record, array $input) : bool;
+    public function update(CoinContract $record, array $input) : CoinContract;
 
     /**
      * @param CoinContract $record

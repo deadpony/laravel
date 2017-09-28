@@ -30,9 +30,9 @@ interface CoinContract {
     public function find(int $id) : self;
 
     /**
-     * @return bool
+     * @return CoinContract
      */
-    public function performSave() : bool;
+    public function performSave() : CoinContract;
 
     /**
      * @return bool
