@@ -2,7 +2,6 @@
 
 namespace App\Components\Gringotts\Goblins;
 
-use App\Components\Gringotts\Goblins\Contracts\Abilities\TermableContract;
 use App\Components\Gringotts\Goblins\Repositories\Accounts\Contracts\AccountContract;
 use App\Components\Gringotts\Goblins\Repositories\Accounts\Contracts\RepositoryContract;
 
