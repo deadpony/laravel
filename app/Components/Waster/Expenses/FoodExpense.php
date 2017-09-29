@@ -26,6 +26,16 @@ class FoodExpense extends AbstractExpense {
     }
 
     /**
+     * @param int $id
+     * @return CoinContract
+     * @throws \Exception if not found
+     */
+    public function view(int $id): CoinContract
+    {
+        return $this->repository->find($id);
+    }
+
+    /**
      * @param float $amount
      * @param $date \Carbon\Carbon|null
      * @return CoinContract

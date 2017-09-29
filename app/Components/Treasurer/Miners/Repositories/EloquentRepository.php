@@ -50,10 +50,11 @@ class EloquentRepository implements RepositoryContract
     /**
      * @param int $id
      * @return CoinContract
+     * @throws \Exception if not found
      */
     public function find(int $id): CoinContract
     {
-        $result = $this->model->find($id);
+        $result = $this->model->scratch()->find($id);
 
         return $this->presentAsEntity($result->presentAsArray());
     }
@@ -64,7 +65,7 @@ class EloquentRepository implements RepositoryContract
      */
     public function all(array $filter = []): Collection
     {
-        return $this->model->getAll($filter)->map(function(Model $item) {
+        return $this->model->scratch()->getAll($filter)->map(function(Model $item) {
             return $this->presentAsEntity($item->presentAsArray());
         });
     }

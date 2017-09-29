@@ -10,6 +10,7 @@ interface RepositoryContract {
     /**
      * @param int $id
      * @return CoinContract
+     * @throws \Exception if not found
      */
     public function find(int $id) : CoinContract;
 

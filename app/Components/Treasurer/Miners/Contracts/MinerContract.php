@@ -9,6 +9,13 @@ use Illuminate\Support\Collection;
 interface MinerContract {
 
     /**
+     * @param int $id
+     * @return CoinContract
+     * @throws \Exception if not found
+     */
+    public function view(int $id) : CoinContract;
+
+    /**
      * @param float $amount
      * @param $date \Carbon\Carbon|null
      * @return CoinContract

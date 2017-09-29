@@ -16,7 +16,6 @@ class SalaryMiner extends AbstractMiner
     private $repository;
 
     /**
-     * SalaryMiner constructor.
      * @param RepositoryContract $repository
      */
     public function __construct(RepositoryContract $repository)
@@ -24,6 +23,16 @@ class SalaryMiner extends AbstractMiner
         $this->repository = $repository;
 
         $this->setType('salary');
+    }
+
+    /**
+     * @param int $id
+     * @return CoinContract
+     * @throws \Exception if not found
+     */
+    public function view(int $id): CoinContract
+    {
+        return $this->repository->find($id);
     }
 
     /**
