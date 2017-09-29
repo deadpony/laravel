@@ -2,12 +2,13 @@
 
 namespace App\Components\Treasurer\Miners;
 
-use App\Components\Treasurer\Miners\Repositories\Contracts\CoinContract;
+use App\Components\Treasurer\Miners\Entities\Contracts\CoinContract;
 use App\Components\Treasurer\Miners\Repositories\Contracts\RepositoryContract;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
-class SalaryMiner extends AbstractMiner {
+class SalaryMiner extends AbstractMiner
+{
 
     /**
      * @var RepositoryContract
@@ -34,8 +35,8 @@ class SalaryMiner extends AbstractMiner {
     {
         return $this->repository->create(
             [
-                'type'       => $this->getType(),
-                'amount'     => $amount,
+                'type' => $this->getType(),
+                'amount' => $amount,
                 'created_at' => $date ?? Carbon::now(),
             ]
         );
@@ -49,11 +50,9 @@ class SalaryMiner extends AbstractMiner {
      */
     public function change(int $id, float $amount, Carbon $date = null): CoinContract
     {
-        $coin = $this->repository->find($id);
-
-        return $this->repository->update($coin, [
-            'type'       => $this->getType(),
-            'amount'     => $amount,
+        return $this->repository->update($id, [
+            'type' => $this->getType(),
+            'amount' => $amount,
             'created_at' => $date ?? Carbon::now(),
         ]);
     }
@@ -64,9 +63,7 @@ class SalaryMiner extends AbstractMiner {
      */
     public function refund(int $id): bool
     {
-        $coin = $this->repository->find($id);
-
-        return $this->repository->delete($coin);
+        return $this->repository->delete($id);
     }
 
     /**
@@ -80,7 +77,7 @@ class SalaryMiner extends AbstractMiner {
             ]
         ]);
 
-        return floatval($loot->sum(function(CoinContract $coin) {
+        return floatval($loot->sum(function (CoinContract $coin) {
             return $coin->getAmount();
         }));
     }

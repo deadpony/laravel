@@ -2,7 +2,7 @@
 
 namespace App\Components\Treasurer\Miners\Contracts;
 
-use App\Components\Treasurer\Miners\Repositories\Contracts\CoinContract;
+use App\Components\Treasurer\Miners\Entities\Contracts\CoinContract;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 

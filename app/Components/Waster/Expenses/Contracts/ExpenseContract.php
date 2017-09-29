@@ -2,7 +2,7 @@
 
 namespace App\Components\Waster\Expenses\Contracts;
 
-use App\Components\Waster\Expenses\Repositories\Contracts\CoinContract;
+use App\Components\Waster\Expenses\Entities\Contracts\CoinContract;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 

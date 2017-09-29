@@ -2,10 +2,12 @@
 
 namespace App\Components\Waster\Expenses\Provide;
 
+use App\Components\Waster\Expenses\Entities\CoinEntity;
+use App\Components\Waster\Expenses\Entities\Contracts\CoinContract;
 use App\Components\Waster\Expenses\Models\CoinModel;
-use App\Components\Waster\Expenses\Repositories\Contracts\CoinContract;
 use App\Components\Waster\Expenses\Repositories\Contracts\RepositoryContract;
 use App\Components\Waster\Expenses\Repositories\EloquentRepository;
+use App\Helpers\Models\Contracts\Model;
 use Illuminate\Support\ServiceProvider;
 
 class ExpensesServiceProvider extends ServiceProvider
@@ -26,7 +28,18 @@ class ExpensesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(CoinContract::class, CoinModel::class);
-        $this->app->bind(RepositoryContract::class, EloquentRepository::class);
+        $this->app->bind(
+            RepositoryContract::class,
+            EloquentRepository::class);
+
+        $this->app->bind(
+            CoinContract::class,
+            CoinEntity::class);
+
+        $this->app->when(EloquentRepository::class)
+            ->needs(Model::class)
+            ->give(function () {
+                return $this->app->make(CoinModel::class);
+            });
     }
 }

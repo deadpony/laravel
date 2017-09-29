@@ -4,7 +4,8 @@ namespace App\Components\Treasurer\Miners;
 
 use App\Components\Treasurer\Miners\Contracts\MinerContract;
 
-abstract class AbstractMiner implements MinerContract {
+abstract class AbstractMiner implements MinerContract
+{
 
     /**
      * @var string
@@ -14,7 +15,7 @@ abstract class AbstractMiner implements MinerContract {
     /**
      * @return string
      */
-    public function getType() : string
+    public function getType(): string
     {
         return $this->type;
     }
@@ -22,7 +23,7 @@ abstract class AbstractMiner implements MinerContract {
     /**
      * @param string $type
      */
-    public function setType(string $type) : void
+    public function setType(string $type): void
     {
         $this->type = $type;
     }

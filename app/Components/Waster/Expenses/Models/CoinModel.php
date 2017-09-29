@@ -2,11 +2,10 @@
 
 namespace App\Components\Waster\Expenses\Models;
 
-use App\Components\Waster\Expenses\Repositories\Contracts\CoinContract;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
+use App\Helpers\Models\Eloquent\Eloquent;
 
-class CoinModel extends Model implements CoinContract {
+class CoinModel extends Eloquent
+{
 
     /**
      * The attributes that are mass assignable.
@@ -14,7 +13,9 @@ class CoinModel extends Model implements CoinContract {
      * @var array
      */
     protected $fillable = [
-        'type', 'amount', 'created_at'
+        'type',
+        'amount',
+        'created_at'
     ];
 
     /**
@@ -34,99 +35,5 @@ class CoinModel extends Model implements CoinContract {
      * @var string
      */
     protected $table = 'expense';
-
-
-    /**
-     * @return CoinContract
-     */
-    public function scratch(): CoinContract
-    {
-        return $this->newInstance();
-    }
-
-    /**
-     * @param array $input
-     * @return CoinContract
-     */
-    public function fill(array $input) : CoinContract
-    {
-        parent::fill($input);
-
-        return $this;
-    }
-
-    /**
-     * @param array $filter
-     * @return Collection
-     */
-    public function getAll(array $filter = []): Collection
-    {
-        if ($filter) {
-            $query = self::newQuery();
-
-            collect($filter)->each(function($condition, $field) use ($query) {
-                if (array_get($condition, 'value')) {
-                    $query->{array_get($condition, 'function', 'where')}($field, array_get($condition, 'condition', '='), array_get($condition, 'value'));
-                } else {
-                    // todo: log this
-                }
-            });
-
-            return $query->get();
-        }
-
-        return self::all();
-    }
-
-    /**
-     * @param int $id
-     * @return CoinContract
-     */
-    public function find(int $id) : CoinContract
-    {
-        return $this->newQuery()->find($id);
-    }
-
-    /**
-     * @return CoinContract
-     */
-    public function performSave(): CoinContract
-    {
-        $this->save();
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function performDelete(): bool
-    {
-        return $this->delete();
-    }
-
-    /**
-     * @return array
-     */
-    public function presentAsArray(): array
-    {
-        return $this->toArray();
-    }
-
-    /**
-     * @return string
-     */
-    public function getType(): string
-    {
-        return strval($this->getAttribute('type'));
-    }
-
-    /**
-     * @return float
-     */
-    public function getAmount(): float
-    {
-        return floatval($this->getAttribute('amount'));
-    }
 
 }

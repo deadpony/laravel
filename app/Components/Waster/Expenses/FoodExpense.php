@@ -2,7 +2,7 @@
 
 namespace App\Components\Waster\Expenses;
 
-use App\Components\Waster\Expenses\Repositories\Contracts\CoinContract;
+use App\Components\Waster\Expenses\Entities\Contracts\CoinContract;
 use App\Components\Waster\Expenses\Repositories\Contracts\RepositoryContract;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -49,9 +49,7 @@ class FoodExpense extends AbstractExpense {
      */
     public function change(int $id, float $amount, Carbon $date = null): CoinContract
     {
-        $coin = $this->repository->find($id);
-
-        return $this->repository->update($coin, [
+        return $this->repository->update($id, [
             'type'       => $this->getType(),
             'amount'     => $amount,
             'created_at' => $date ?? Carbon::now(),
@@ -64,9 +62,7 @@ class FoodExpense extends AbstractExpense {
      */
     public function claim(int $id): bool
     {
-        $coin = $this->repository->find($id);
-
-        return $this->repository->delete($coin);
+        return $this->repository->delete($id);
     }
 
     /**

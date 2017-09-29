@@ -2,33 +2,49 @@
 
 namespace App\Components\Waster\Expenses\Repositories;
 
-use App\Components\Waster\Expenses\Repositories\Contracts\CoinContract;
+use App\Components\Waster\Expenses\Entities\Contracts\CoinContract;
 use App\Components\Waster\Expenses\Repositories\Contracts\RepositoryContract;
+use App\Helpers\Entities\Contracts\Composable;
+use App\Helpers\Models\Contracts\Model;
 use Illuminate\Support\Collection;
 
-class EloquentRepository implements RepositoryContract {
+class EloquentRepository implements RepositoryContract
+{
 
     /**
-     * @var CoinContract
+     * @var Model
      */
-    private $coin;
+    private $model;
 
     /**
-     * EloquentRepository constructor.
-     * @param CoinContract $coin
+     * @var string
      */
-    public function __construct(CoinContract $coin)
+    private $entity = "App\\Components\\Waster\\Expenses\\Entities\\CoinEntity";
+
+    /**
+     * @param Model $model
+     */
+    public function __construct(Model $model)
     {
-        $this->coin = $coin;
+        $this->model  = $model;
     }
 
     /**
-     * @param array $filter
-     * @return Collection
+     * @param array $input
+     * @return CoinContract
+     * @throws \Exception
      */
-    public function all(array $filter = []): Collection
+    private function presentAsEntity(array $input): CoinContract
     {
-        return $this->coin->getAll($filter);
+        $entity = app()->make($this->entity);
+
+        if (!$entity instanceof Composable) {
+            throw new \Exception("Entity should be an instance of Composable");
+        }
+
+        $entity->compose($input);
+
+        return $entity;
     }
 
     /**
@@ -37,7 +53,20 @@ class EloquentRepository implements RepositoryContract {
      */
     public function find(int $id): CoinContract
     {
-        return $this->coin->find($id);
+        $result = $this->model->find($id);
+
+        return $this->presentAsEntity($result->presentAsArray());
+    }
+
+    /**
+     * @param array $filter
+     * @return Collection
+     */
+    public function all(array $filter = []): Collection
+    {
+        return $this->model->getAll($filter)->map(function(Model $item) {
+            return $this->presentAsEntity($item->presentAsArray());
+        });
     }
 
     /**
@@ -46,30 +75,30 @@ class EloquentRepository implements RepositoryContract {
      */
     public function create(array $input): CoinContract
     {
-        return $this->coin->scratch()->fill($input)->performSave();
+        $item = $this->model->scratch()->fill($input)->performSave();
+
+        return $this->presentAsEntity($item->presentAsArray());
     }
 
     /**
-     * @param CoinContract $record
+     * @param int $id
      * @param array $input
      * @return CoinContract
      */
-    public function update(CoinContract $record, array $input): CoinContract
+    public function update(int $id, array $input): CoinContract
     {
-        $this->coin = $record;
-        
-        return $this->coin->fill($input)->performSave();
+        $item = $this->model->scratch()->find($id)->fill($input)->performSave();
+
+        return $this->presentAsEntity($item->presentAsArray());
     }
 
     /**
-     * @param CoinContract $record
+     * @param int $id
      * @return bool
      */
-    public function delete(CoinContract $record): bool
+    public function delete(int $id): bool
     {
-        $this->coin = $record;
-
-        return (bool) $this->coin->performDelete();
+        return $this->model->scratch()->find($id)->performDelete();
     }
 
 }
