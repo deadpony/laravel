@@ -2,6 +2,7 @@
 
 namespace App\Components\Gringotts;
 
+use App\Components\Gringotts\Contracts\GringottsContract;
 use App\Components\Gringotts\Goblins\Contracts\GoblinContract;
 use App\Components\Gringotts\Goblins\CreditGoblin;
 use App\Components\Gringotts\Goblins\InstallmentGoblin;
@@ -57,10 +58,10 @@ abstract class AbstractGringotts implements GringottsContract
     {
         $goblin = "App\\Components\\Gringotts\\Goblins\\" .ucfirst($method) . "Goblin";
 
-        if (!$this->miners()->has($goblin)) {
+        if (!$this->goblins()->has($goblin)) {
             throw new \Exception('Not implemented');
         }
 
-        return $this->miners()->get($goblin);
+        return $this->goblins()->get($goblin);
     }
 }

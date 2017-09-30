@@ -2,9 +2,8 @@
 
 namespace App\Components\Gringotts\Goblins;
 
-use App\Components\Gringotts\Goblins\Repositories\Accounts\Contracts\AccountContract;
+use App\Components\Gringotts\Goblins\Entities\Contracts\AccountContract;
 use App\Components\Gringotts\Goblins\Repositories\Accounts\Contracts\RepositoryContract;
-
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -25,6 +24,16 @@ class CreditGoblin extends AbstractGoblin
         $this->repository = $repository;
 
         $this->setType('credit');
+    }
+
+    /**
+     * @param int $id
+     * @return AccountContract
+     * @throws \Exception if not found
+     */
+    public function view(int $id): AccountContract
+    {
+        return $this->repository->find($id);
     }
 
     /**
@@ -51,9 +60,7 @@ class CreditGoblin extends AbstractGoblin
      */
     public function change(int $id, float $amount, Carbon $date = null): AccountContract
     {
-        $account = $this->repository->find($id);
-
-        return $this->repository->update($account, [
+        return $this->repository->update($id, [
             'type' => $this->getType(),
             'amount' => $amount,
             'created_at' => $date ?? Carbon::now(),
@@ -66,9 +73,7 @@ class CreditGoblin extends AbstractGoblin
      */
     public function close(int $id): bool
     {
-        $account = $this->repository->find($id);
-
-        return $this->repository->delete($account);
+        return $this->repository->delete($id);
     }
 
     /**

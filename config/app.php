@@ -179,6 +179,7 @@ return [
 
         App\Components\Treasurer\Miners\Provide\MinersServiceProvider::class,
         App\Components\Waster\Expenses\Provide\ExpensesServiceProvider::class,
+        App\Components\Gringotts\Goblins\Provide\GoblinsServiceProvider::class,
 
     ],
 

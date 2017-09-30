@@ -19,7 +19,7 @@ class EloquentRepository implements RepositoryContract
     /**
      * @var string
      */
-    private $entity = "App\\Components\\Treasurer\\Miners\\Entities\\CoinEntity";
+    private $entity = CoinContract::class;
 
     /**
      * @param Model $model

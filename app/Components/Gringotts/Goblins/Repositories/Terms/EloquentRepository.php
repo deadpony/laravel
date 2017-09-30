@@ -2,25 +2,61 @@
 
 namespace App\Components\Gringotts\Goblins\Repositories\Terms;
 
+use App\Components\Gringotts\Goblins\Entities\Contracts\TermContract;
 use App\Components\Gringotts\Goblins\Repositories\Terms\Contracts\RepositoryContract;
-use App\Components\Gringotts\Goblins\Repositories\Terms\Contracts\TermContract;
+use App\Helpers\Entities\Composable;
+use App\Helpers\Models\Contracts\Model;
 use Illuminate\Support\Collection;
 
-class EloquentRepository implements RepositoryContract 
+class EloquentRepository implements RepositoryContract
 {
 
     /**
-     * @var TermContract
+     * @var Model
      */
-    private $term;
+    private $model;
 
     /**
-     * EloquentRepository constructor.
-     * @param TermContract $coin
+     * @var string
      */
-    public function __construct(TermContract $coin)
+    private $entity = TermContract::class;
+
+    /**
+     * @param Model $model
+     */
+    public function __construct(Model $model)
     {
-        $this->term = $coin;
+        $this->model  = $model;
+    }
+
+    /**
+     * @param array $input
+     * @return TermContract
+     * @throws \Exception
+     */
+    private function presentAsEntity(array $input): TermContract
+    {
+        $entity = app()->make($this->entity);
+
+        if (!$entity instanceof Composable) {
+            throw new \Exception("Entity should be an instance of Composable");
+        }
+
+        $entity->compose($input);
+
+        return $entity;
+    }
+
+    /**
+     * @param int $id
+     * @return TermContract
+     * @throws \Exception if not found
+     */
+    public function find(int $id): TermContract
+    {
+        $result = $this->model->scratch()->find($id);
+
+        return $this->presentAsEntity($result->presentAsArray());
     }
 
     /**
@@ -29,16 +65,9 @@ class EloquentRepository implements RepositoryContract
      */
     public function all(array $filter = []): Collection
     {
-        return $this->term->getAll($filter);
-    }
-
-    /**
-     * @param int $id
-     * @return TermContract
-     */
-    public function find(int $id): TermContract
-    {
-        return $this->term->find($id);
+        return $this->model->scratch()->getAll($filter)->map(function(Model $item) {
+            return $this->presentAsEntity($item->presentAsArray());
+        });
     }
 
     /**
@@ -47,30 +76,29 @@ class EloquentRepository implements RepositoryContract
      */
     public function create(array $input): TermContract
     {
-        return $this->term->scratch()->fill($input)->performSave();
+        $item = $this->model->scratch()->fill($input)->performSave();
+
+        return $this->presentAsEntity($item->presentAsArray());
     }
 
     /**
-     * @param TermContract $record
+     * @param int $id
      * @param array $input
      * @return TermContract
      */
-    public function update(TermContract $record, array $input): TermContract
+    public function update(int $id, array $input): TermContract
     {
-        $this->term = $record;
-        
-        return $this->term->fill($input)->performSave();
+        $item = $this->model->scratch()->find($id)->fill($input)->performSave();
+
+        return $this->presentAsEntity($item->presentAsArray());
     }
 
     /**
-     * @param TermContract $record
+     * @param int $id
      * @return bool
      */
-    public function delete(TermContract $record): bool
+    public function delete(int $id): bool
     {
-        $this->term = $record;
-
-        return (bool) $this->term->performDelete();
+        return $this->model->scratch()->find($id)->performDelete();
     }
-
 }

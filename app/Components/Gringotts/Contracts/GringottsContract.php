@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\Gringotts;
+namespace App\Components\Gringotts\Contracts;
 
 use Illuminate\Support\Collection;
 

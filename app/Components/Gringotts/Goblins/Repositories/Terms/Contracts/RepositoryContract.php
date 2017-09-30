@@ -2,9 +2,17 @@
 
 namespace App\Components\Gringotts\Goblins\Repositories\Terms\Contracts;
 
+use App\Components\Gringotts\Goblins\Entities\Contracts\TermContract;
 use Illuminate\Support\Collection;
 
 interface RepositoryContract {
+
+    /**
+     * @param int $id
+     * @return TermContract
+     * @throws \Exception if not found
+     */
+    public function find(int $id) : TermContract;
 
     /**
      * @param array $filter
@@ -13,28 +21,22 @@ interface RepositoryContract {
     public function all(array $filter = []) : Collection;
 
     /**
-     * @param int $id
-     * @return TermContract
-     */
-    public function find(int $id) : TermContract;
-
-    /**
      * @param array $input
      * @return TermContract
      */
     public function create(array $input) : TermContract;
 
     /**
-     * @param TermContract $record
+     * @param int $id
      * @param array $input
      * @return TermContract
      */
-    public function update(TermContract $record, array $input) : TermContract;
+    public function update(int $id, array $input) : TermContract;
 
     /**
-     * @param TermContract $record
+     * @param int $id
      * @return bool
      */
-    public function delete(TermContract $record) : bool;
+    public function delete(int $id) : bool;
 
 }

@@ -2,24 +2,61 @@
 
 namespace App\Components\Gringotts\Goblins\Repositories\Accounts;
 
-use App\Components\Gringotts\Goblins\Repositories\Accounts\Contracts\AccountContract;
+use App\Components\Gringotts\Goblins\Entities\Contracts\AccountContract;
 use App\Components\Gringotts\Goblins\Repositories\Accounts\Contracts\RepositoryContract;
+use App\Helpers\Entities\Composable;
+use App\Helpers\Models\Contracts\Model;
 use Illuminate\Support\Collection;
 
-class EloquentRepository implements RepositoryContract {
+class EloquentRepository implements RepositoryContract
+{
 
     /**
-     * @var AccountContract
+     * @var Model
      */
-    private $account;
+    private $model;
 
     /**
-     * EloquentRepository constructor.
-     * @param AccountContract $coin
+     * @var string
      */
-    public function __construct(AccountContract $coin)
+    private $entity = AccountContract::class;
+
+    /**
+     * @param Model $model
+     */
+    public function __construct(Model $model)
     {
-        $this->account = $coin;
+        $this->model  = $model;
+    }
+
+    /**
+     * @param array $input
+     * @return AccountContract
+     * @throws \Exception
+     */
+    private function presentAsEntity(array $input): AccountContract
+    {
+        $entity = app()->make($this->entity);
+
+        if (!$entity instanceof Composable) {
+            throw new \Exception("Entity should be an instance of Composable");
+        }
+
+        $entity->compose($input);
+
+        return $entity;
+    }
+
+    /**
+     * @param int $id
+     * @return AccountContract
+     * @throws \Exception if not found
+     */
+    public function find(int $id): AccountContract
+    {
+        $result = $this->model->scratch()->find($id);
+
+        return $this->presentAsEntity($result->presentAsArray());
     }
 
     /**
@@ -28,16 +65,9 @@ class EloquentRepository implements RepositoryContract {
      */
     public function all(array $filter = []): Collection
     {
-        return $this->account->getAll($filter);
-    }
-
-    /**
-     * @param int $id
-     * @return AccountContract
-     */
-    public function find(int $id): AccountContract
-    {
-        return $this->account->find($id);
+        return $this->model->scratch()->getAll($filter)->map(function(Model $item) {
+            return $this->presentAsEntity($item->presentAsArray());
+        });
     }
 
     /**
@@ -46,30 +76,29 @@ class EloquentRepository implements RepositoryContract {
      */
     public function create(array $input): AccountContract
     {
-        return $this->account->scratch()->fill($input)->performSave();
+        $item = $this->model->scratch()->fill($input)->performSave();
+
+        return $this->presentAsEntity($item->presentAsArray());
     }
 
     /**
-     * @param AccountContract $record
+     * @param int $id
      * @param array $input
      * @return AccountContract
      */
-    public function update(AccountContract $record, array $input): AccountContract
+    public function update(int $id, array $input): AccountContract
     {
-        $this->account = $record;
-        
-        return $this->account->fill($input)->performSave();
+        $item = $this->model->scratch()->find($id)->fill($input)->performSave();
+
+        return $this->presentAsEntity($item->presentAsArray());
     }
 
     /**
-     * @param AccountContract $record
+     * @param int $id
      * @return bool
      */
-    public function delete(AccountContract $record): bool
+    public function delete(int $id): bool
     {
-        $this->account = $record;
-
-        return (bool) $this->account->performDelete();
+        return $this->model->scratch()->find($id)->performDelete();
     }
-
 }
