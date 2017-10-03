@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Components\Gringotts\Goblins\Entities\Contracts;
+namespace App\Components\Gringotts\Goblins\Entities\Account\Term\Contracts;
 
+use App\Components\Gringotts\Goblins\Entities\Account\Contracts\AccountContract;
 use App\Helpers\Entities\Contracts\Composable;
 use Carbon\Carbon;
 
@@ -84,4 +85,14 @@ interface TermContract extends Composable
      * @return void
      */
     public function setCreatedAt(Carbon $createdAt): void;
+
+    /**
+     * @return AccountContract
+     */
+    public function getAccount(): AccountContract;
+
+    /**
+     * @param AccountContract $account
+     */
+    public function setAccount(AccountContract $account): void;
 }

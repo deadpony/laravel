@@ -3,6 +3,7 @@
 namespace App\Helpers\Models\Eloquent;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use \App\Helpers\Models\Contracts\Model as ModelContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -10,6 +11,18 @@ use Illuminate\Support\Collection;
 
 class Eloquent extends Model implements ModelContract
 {
+    /**
+     * @var Builder
+     */
+    private $builder;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->builder  = $this->newQuery();
+    }
+
     /**
      * @return ModelContract
      */
@@ -30,27 +43,26 @@ class Eloquent extends Model implements ModelContract
     }
 
     /**
-     * @param array $filter
+     * @return ModelContract
+     * @throws \Exception if not found
+     */
+    public function getOne(): ModelContract
+    {
+        try {
+            /** @var ModelContract $item */
+            $item =  $this->builder->firstOrFail();
+            return $item;
+        } catch (ModelNotFoundException $ex) {
+            throw new \Exception("Not exists");
+        }
+    }
+
+    /**
      * @return Collection
      */
-    public function getAll(array $filter = []): Collection
+    public function getAll(): Collection
     {
-        if ($filter) {
-            $query = self::newQuery();
-
-            collect($filter)->each(function ($condition, $field) use ($query) {
-                if (array_get($condition, 'value')) {
-                    $query->{array_get($condition, 'function', 'where')}($field,
-                        array_get($condition, 'condition', '='), array_get($condition, 'value'));
-                } else {
-                    // todo: log this
-                }
-            });
-
-            return $query->get();
-        }
-
-        return self::all();
+        return $this->builder->get();
     }
 
     /**
@@ -62,11 +74,24 @@ class Eloquent extends Model implements ModelContract
     {
         try {
             /** @var ModelContract $item */
-            $item = $this->newQuery()->findOrFail($id);
+            $item = $this->builder->findOrFail($id);
             return $item;
         } catch (ModelNotFoundException $ex) {
             throw new \Exception("Not exists with given id: {$id}");
         }
+    }
+
+    /**
+     * @param string $field
+     * @param string $operator
+     * @param $value
+     * @return ModelContract
+     */
+    public function where(string $field, string $operator, $value): ModelContract
+    {
+        $this->builder->where($field, $operator, $value);
+
+        return $this;
     }
 
     /**

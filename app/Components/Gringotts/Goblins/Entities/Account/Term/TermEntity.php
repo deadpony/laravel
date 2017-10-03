@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Components\Gringotts\Goblins\Entities;
+namespace App\Components\Gringotts\Goblins\Entities\Account\Term;
 
-use App\Components\Gringotts\Goblins\Entities\Contracts\TermContract;
+use App\Components\Gringotts\Goblins\Entities\Account\Contracts\AccountContract;
+use App\Components\Gringotts\Goblins\Entities\Account\Term\Contracts\TermContract;
 use App\Helpers\Entities\Composable;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -137,5 +138,22 @@ class TermEntity extends Composable implements TermContract
     {
         $this->storage->put('created_at', $createdAt);
     }
+
+    /**
+     * @return AccountContract
+     */
+    public function getAccount(): AccountContract
+    {
+        return $this->storage->get('account');
+    }
+
+    /**
+     * @param AccountContract $account
+     */
+    public function setAccount(AccountContract $account): void
+    {
+        $this->storage->put('account', $account);
+    }
+
 
 }

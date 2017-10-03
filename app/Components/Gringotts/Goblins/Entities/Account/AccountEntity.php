@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Components\Gringotts\Goblins\Entities;
+namespace App\Components\Gringotts\Goblins\Entities\Account;
 
-use App\Components\Gringotts\Goblins\Entities\Contracts\AccountContract;
+use App\Components\Gringotts\Goblins\Entities\Account\Contracts\AccountContract;
+use App\Components\Gringotts\Goblins\Entities\Account\Term\Contracts\TermContract;
 use App\Helpers\Entities\Composable;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -84,6 +85,27 @@ class AccountEntity extends Composable implements AccountContract
     public function setCreatedAt(Carbon $createdAt): void
     {
         $this->storage->put('created_at', $createdAt);
+    }
+
+    /**
+     * @return TermContract
+     * @throws \Exception if term is not set
+     */
+    public function getTerm(): TermContract
+    {
+        if (!$this->storage->has('term')) {
+            throw new \Exception('Term is not set');
+        }
+
+        return $this->storage->get('term');
+    }
+
+    /**
+     * @param TermContract $term
+     */
+    public function setTerm(TermContract $term): void
+    {
+        $this->storage->put('term', $term);
     }
 
 }

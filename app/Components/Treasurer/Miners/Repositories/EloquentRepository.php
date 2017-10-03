@@ -26,7 +26,23 @@ class EloquentRepository implements RepositoryContract
      */
     public function __construct(Model $model)
     {
-        $this->model  = $model;
+        $this->model = $model;
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
+    {
+        $closure = call_user_func_array($name, $arguments);
+
+        if (in_array($name, ['find', 'all', 'create', 'update', 'delete'])) {
+            $this->model = $this->model->scratch();
+        }
+
+        return $closure;
     }
 
     /**
@@ -54,7 +70,7 @@ class EloquentRepository implements RepositoryContract
      */
     public function find(int $id): CoinContract
     {
-        $result = $this->model->scratch()->find($id);
+        $result = $this->model->find($id);
 
         return $this->presentAsEntity($result->presentAsArray());
     }
@@ -65,7 +81,11 @@ class EloquentRepository implements RepositoryContract
      */
     public function all(array $filter = []): Collection
     {
-        return $this->model->scratch()->getAll($filter)->map(function(Model $item) {
+        collect($filter)->each(function(array $params, string $field) {
+            $this->model->where($field, array_get($params, 'operator', '='), array_get($params, 'value'));
+        });
+
+        return $this->model->getAll()->map(function (Model $item) {
             return $this->presentAsEntity($item->presentAsArray());
         });
     }
@@ -76,7 +96,7 @@ class EloquentRepository implements RepositoryContract
      */
     public function create(array $input): CoinContract
     {
-        $item = $this->model->scratch()->fill($input)->performSave();
+        $item = $this->model->fill($input)->performSave();
 
         return $this->presentAsEntity($item->presentAsArray());
     }
@@ -88,7 +108,7 @@ class EloquentRepository implements RepositoryContract
      */
     public function update(int $id, array $input): CoinContract
     {
-        $item = $this->model->scratch()->find($id)->fill($input)->performSave();
+        $item = $this->model->find($id)->fill($input)->performSave();
 
         return $this->presentAsEntity($item->presentAsArray());
     }
@@ -99,7 +119,7 @@ class EloquentRepository implements RepositoryContract
      */
     public function delete(int $id): bool
     {
-        return $this->model->scratch()->find($id)->performDelete();
+        return $this->model->find($id)->performDelete();
     }
 
 }

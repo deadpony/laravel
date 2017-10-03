@@ -12,11 +12,6 @@ abstract class AbstractGoblin implements GoblinContract
     protected $type;
 
     /**
-     * @var array
-     */
-    protected $term = [];
-
-    /**
      * @return string
      */
     public function getType() : string

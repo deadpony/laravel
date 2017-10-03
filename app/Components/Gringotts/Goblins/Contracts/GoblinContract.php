@@ -2,7 +2,7 @@
 
 namespace App\Components\Gringotts\Goblins\Contracts;
 
-use App\Components\Gringotts\Goblins\Entities\Contracts\AccountContract;
+use App\Components\Gringotts\Goblins\Entities\Account\Contracts\AccountContract;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -36,6 +36,18 @@ interface GoblinContract
      * @return bool
      */
     public function close(int $id): bool;
+
+    /**
+     * @param AccountContract $account
+     * @param int $months
+     * @param Carbon $deadlineDate
+     * @param Carbon|null $date
+     * @param float $setupFee
+     * @param float $monthlyFee
+     * @param int $thresholdDay
+     * @return AccountContract
+     */
+    public function acceptTerm(AccountContract $account, int $months, Carbon $deadlineDate, Carbon $date = null, float $setupFee = 0, float $monthlyFee = 0, int $thresholdDay = 0): AccountContract;
 
     /**
      * @return float

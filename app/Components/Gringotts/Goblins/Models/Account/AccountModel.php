@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Components\Gringotts\Goblins\Models;
+namespace App\Components\Gringotts\Goblins\Models\Account;
 
 use App\Helpers\Models\Eloquent\Eloquent;
 
-class TermModel extends Eloquent
+class AccountModel extends Eloquent
 {
 
     /**
@@ -13,7 +13,7 @@ class TermModel extends Eloquent
      * @var array
      */
     protected $fillable = [
-        'months', 'setup_fee', 'monthly_fee', 'threshold_day', 'deadline_date', 'created_at',
+        'type', 'amount', 'created_at'
     ];
 
     /**
@@ -24,8 +24,7 @@ class TermModel extends Eloquent
     protected $dates = [
         'created_at',
         'updated_at',
-        'deleted_at',
-        'deadline_date',
+        'deleted_at'
     ];
 
     /**
@@ -33,5 +32,6 @@ class TermModel extends Eloquent
      *
      * @var string
      */
-    protected $table = 'terms';
+    protected $table = 'accounts';
+
 }

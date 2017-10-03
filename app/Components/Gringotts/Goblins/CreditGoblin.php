@@ -2,26 +2,25 @@
 
 namespace App\Components\Gringotts\Goblins;
 
-use App\Components\Gringotts\Goblins\Entities\Contracts\AccountContract;
-use App\Components\Gringotts\Goblins\Repositories\Accounts\Contracts\RepositoryContract;
+use App\Components\Gringotts\Goblins\Entities\Account\Contracts\AccountContract;
+use App\Components\Gringotts\Goblins\Repositories\Accounts\Contracts\RepositoryContract as AccountRepositoryContract;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class CreditGoblin extends AbstractGoblin
 {
     /**
-     * @var RepositoryContract
+     * @var AccountRepositoryContract
      */
-    private $repository;
-
+    private $accountRepository;
 
     /**
      * SalaryMiner constructor.
-     * @param RepositoryContract $repository
+     * @param AccountRepositoryContract $accountRepository
      */
-    public function __construct(RepositoryContract $repository)
+    public function __construct(AccountRepositoryContract $accountRepository)
     {
-        $this->repository = $repository;
+        $this->accountRepository = $accountRepository;
 
         $this->setType('credit');
     }
@@ -33,7 +32,7 @@ class CreditGoblin extends AbstractGoblin
      */
     public function view(int $id): AccountContract
     {
-        return $this->repository->find($id);
+        return $this->accountRepository->find($id);
     }
 
     /**
@@ -43,7 +42,7 @@ class CreditGoblin extends AbstractGoblin
      */
     public function open(float $amount, Carbon $date = null): AccountContract
     {
-        return $this->repository->create(
+        return $this->accountRepository->create(
             [
                 'type' => $this->getType(),
                 'amount' => $amount,
@@ -60,7 +59,7 @@ class CreditGoblin extends AbstractGoblin
      */
     public function change(int $id, float $amount, Carbon $date = null): AccountContract
     {
-        return $this->repository->update($id, [
+        return $this->accountRepository->update($id, [
             'type' => $this->getType(),
             'amount' => $amount,
             'created_at' => $date ?? Carbon::now(),
@@ -73,15 +72,62 @@ class CreditGoblin extends AbstractGoblin
      */
     public function close(int $id): bool
     {
-        return $this->repository->delete($id);
+        return $this->accountRepository->delete($id);
     }
+
+    /**
+     * @param AccountContract $account
+     * @param int $months
+     * @param Carbon $deadlineDate
+     * @param Carbon|null $date
+     * @param float $setupFee
+     * @param float $monthlyFee
+     * @param int $thresholdDay
+     * @return AccountContract
+     */
+    public function acceptTerm(
+        AccountContract $account,
+        int $months,
+        Carbon $deadlineDate,
+        Carbon $date = null,
+        float $setupFee = 0,
+        float $monthlyFee = 0,
+        int $thresholdDay = 0
+    ): AccountContract {
+        try {
+            return $this->accountRepository->updateTerm(
+                $account->getTerm(),
+                [
+                    'months' => $months,
+                    'deadline_date' => $date ?? Carbon::now(),
+                    'created_at' => $date ?? Carbon::now(),
+                    'setup_fee' => $setupFee,
+                    'monthly_fee' => $monthlyFee,
+                    'threshold_day' => $thresholdDay,
+                ]
+            );
+        } catch (\Exception $ex) {
+            return $this->accountRepository->createTerm(
+                $account,
+                [
+                    'months' => $months,
+                    'deadline_date' => $date ?? Carbon::now(),
+                    'created_at' => $date ?? Carbon::now(),
+                    'setup_fee' => $setupFee,
+                    'monthly_fee' => $monthlyFee,
+                    'threshold_day' => $thresholdDay,
+                ]
+            );
+        }
+    }
+
 
     /**
      * @return float
      */
     public function debt(): float
     {
-        $debt = $this->repository->all([
+        $debt = $this->accountRepository->all([
             'type' => [
                 'value' => $this->getType(),
             ]
@@ -97,7 +143,7 @@ class CreditGoblin extends AbstractGoblin
      */
     public function debtList(): Collection
     {
-        return $this->repository->all([
+        return $this->accountRepository->all([
             'type' => [
                 'value' => $this->getType(),
             ]

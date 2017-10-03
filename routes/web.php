@@ -29,7 +29,21 @@ Route::group(['prefix' => 'waster'], function () {
 Route::group(['prefix' => 'gringotts'], function () {
     Route::get('test', function () {
         $gringotts = new App\Components\Gringotts\MasterGringotts();
-        return response()->json($gringotts->credit()->open('300')->getID());
+
+        $account   = $gringotts->credit()->open('300');
+        $account   = $gringotts->credit()->acceptTerm(
+            $account,
+            6,
+            \Carbon\Carbon::now()
+        );
+
+        $account   = $gringotts->credit()->view(6);
+        $account   = $gringotts->credit()->acceptTerm(
+            $account,
+            12,
+            \Carbon\Carbon::now()
+        );
+        return response()->json($account->getTerm()->set());
     });
 });
 
