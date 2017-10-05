@@ -18,25 +18,25 @@ class StatementEntity implements StatementContract
      * @var Identity
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="none")
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string",unique="true")
      */
     private $id;
 
     /**
      * @var string
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string",nullable="false")
      */
     private $type;
 
     /**
      * @var float
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float",nullable="false")
      */
     private $amount;
 
     /**
      * @var DateTime
-     * @ORM\Column(type="datetime", nullable="false", column="created_at")
+     * @ORM\Column(type="datetime",nullable="false",column="created_at")
      */
     private $createdAt;
 
