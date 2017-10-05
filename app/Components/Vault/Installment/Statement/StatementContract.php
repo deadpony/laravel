@@ -24,9 +24,9 @@ interface StatementContract
     public function amount(): float;
 
     /**
-     * @return \DateTimeImmutable
+     * @return \DateTime
      */
-    public function createdAt(): \DateTimeImmutable;
+    public function createdAt(): \DateTime;
 
     /**
      * @return TermContract|null

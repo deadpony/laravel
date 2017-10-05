@@ -22,8 +22,7 @@ Route::group(['prefix' => 'installment'], function () {
         $statementWithTermID     = $service->signTerm(12, 10)->signStatement(500);
         $statementResignedID     = $service->resignStatement($statementID, 1000);
 
-
-        return response()->json([$statementID, $statementWithTermID, $statementResignedID, $statementResignedTermID]);
+        return response()->json([$statementID, $statementWithTermID, $statementResignedID, $statementResignedTermID, $service->viewStatement($statementResignedTermID)]);
     });
 });
 

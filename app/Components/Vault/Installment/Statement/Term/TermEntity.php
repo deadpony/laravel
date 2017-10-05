@@ -3,7 +3,6 @@
 namespace App\Components\Vault\Installment\Statement\Term;
 
 use App\Components\Vault\Installment\Statement\StatementContract;
-use App\Convention\ValueObjects\DateTime\DateTime;
 use App\Convention\ValueObjects\Identity\Identity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -46,7 +45,7 @@ class TermEntity implements TermContract
     private $monthlyFee;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      * @ORM\Column(type="datetime", nullable=false, name="created_at")
      */
     private $createdAt;
@@ -161,9 +160,9 @@ class TermEntity implements TermContract
 
 
     /**
-     * @return \DateTimeImmutable
+     * @return \DateTime
      */
-    public function createdAt(): \DateTimeImmutable
+    public function createdAt(): \DateTime
     {
         return $this->createdAt;
     }

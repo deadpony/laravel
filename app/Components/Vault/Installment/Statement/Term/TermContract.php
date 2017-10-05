@@ -34,9 +34,9 @@ interface TermContract
     public function monthlyFee(): float;
 
     /**
-     * @return \DateTimeImmutable
+     * @return \DateTime
      */
-    public function createdAt(): \DateTimeImmutable;
+    public function createdAt(): \DateTime;
 
     /**
      * @return StatementContract
