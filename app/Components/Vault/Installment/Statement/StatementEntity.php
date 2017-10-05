@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Components\Vault\Incoming\Statement;
+namespace App\Components\Vault\Installment\Statement;
 
-use App\Components\Vault\Incoming\Statement\Term\TermContract;
+use App\Components\Vault\Installment\Statement\Term\TermContract;
 use App\Convention\ValueObjects\DateTime\DateTime;
 use App\Convention\ValueObjects\Identity\Identity;
 
@@ -10,14 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="incoming_statements")
+ * @ORM\Table(name="installment_statements")
  */
 class StatementEntity implements StatementContract
 {
     /**
      * @var Identity
      * @ORM\Id
-     * @ORM\Column(type="string",unique=true)
+     * @ORM\Column(type="identity",unique=true)
      */
     private $id;
 
@@ -41,7 +41,7 @@ class StatementEntity implements StatementContract
 
     /**
      * @var TermContract|null;
-     * @ORM\OneToOne(targetEntity="App\Components\Vault\Incoming\Statement\Term\TermEntity", mappedBy="statement", orphanRemoval=true, cascade={"persist", "remove", "merge"})
+     * @ORM\OneToOne(targetEntity="App\Components\Vault\Installment\Statement\Term\TermEntity", mappedBy="statement", orphanRemoval=true, cascade={"persist", "remove", "merge"})
      */
     private $term;
 
@@ -114,9 +114,9 @@ class StatementEntity implements StatementContract
     }
 
     /**
-     * @return DateTime
+     * @return \DateTimeImmutable
      */
-    public function createdAt(): DateTime
+    public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -145,6 +145,17 @@ class StatementEntity implements StatementContract
         }
 
         $this->term = $term;
+
+        return $this;
+    }
+
+    /**
+     * @param float $amount
+     * @return StatementContract
+     */
+    public function updateAmount(float $amount): StatementContract
+    {
+        $this->setAmount($amount);
 
         return $this;
     }

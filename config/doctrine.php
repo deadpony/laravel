@@ -108,7 +108,8 @@ return [
     |--------------------------------------------------------------------------
     */
     'custom_types'               => [
-        'json' => LaravelDoctrine\ORM\Types\Json::class
+        'json' => LaravelDoctrine\ORM\Types\Json::class,
+        'identity' => \App\Convention\ValueObjects\Identity\Doctrine\IdentityType::class,
     ],
     /*
     |--------------------------------------------------------------------------

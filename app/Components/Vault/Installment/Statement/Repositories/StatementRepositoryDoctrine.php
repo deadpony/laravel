@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Components\Vault\Incoming\Statement\Repositories;
+namespace App\Components\Vault\Installment\Statement\Repositories;
 
-use App\Components\Vault\Incoming\Statement\StatementContract;
-use App\Components\Vault\Incoming\Statement\StatementEntity;
+use App\Components\Vault\Installment\Statement\StatementContract;
+use App\Components\Vault\Installment\Statement\StatementEntity;
 use App\Convention\ValueObjects\Identity\Identity;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -25,12 +25,12 @@ class StatementRepositoryDoctrine implements StatementRepositoryContract
 
     /**
      * @param Identity $identity
-     * @return StatementContract
+     * @return StatementContract|null
      */
-    public function byIdentity(Identity $identity): StatementContract
+    public function byIdentity(Identity $identity)
     {
         /** @var StatementEntity $entity */
-        $entity = $this->statementsEntityRepository->find($identity->id());
+        $entity = $this->statementsEntityRepository->find($identity);
 
         if ($entity === null) {
             throw new \Exception("Not Found Exception");
@@ -41,9 +41,9 @@ class StatementRepositoryDoctrine implements StatementRepositoryContract
 
 
     /**
-     * @return StatementContract
+     * @return StatementContract|null
      */
-    public function getOne(): StatementContract
+    public function getOne()
     {
         // TODO: Implement getAll() method.
     }

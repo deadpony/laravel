@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Components\Vault\Incoming\Statement\Repositories;
+namespace App\Components\Vault\Installment\Statement\Repositories;
 
-use App\Components\Vault\Incoming\Statement\StatementContract;
+use App\Components\Vault\Installment\Statement\StatementContract;
 use App\Convention\ValueObjects\Identity\Identity;
 use Illuminate\Support\Collection;
 
@@ -10,14 +10,14 @@ interface StatementRepositoryContract
 {
     /**
      * @param Identity $identity
-     * @return StatementContract
+     * @return StatementContract|null
      */
-    public function byIdentity(Identity $identity): StatementContract;
+    public function byIdentity(Identity $identity);
 
     /**
-     * @return StatementContract
+     * @return StatementContract|null
      */
-    public function getOne(): StatementContract;
+    public function getOne();
 
     /**
      * @return Collection

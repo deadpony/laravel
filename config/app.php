@@ -177,7 +177,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        \App\Components\Vault\Incoming\Providers\VaultIncomingServiceProvider::class,
+        \App\Components\Vault\Installment\Providers\VaultIncomingServiceProvider::class,
 
     ],
 

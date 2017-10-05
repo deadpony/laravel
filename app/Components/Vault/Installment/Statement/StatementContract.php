@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Components\Vault\Incoming\Statement;
+namespace App\Components\Vault\Installment\Statement;
 
-use App\Components\Vault\Incoming\Statement\Term\TermContract;
+use App\Components\Vault\Installment\Statement\Term\TermContract;
 use App\Convention\ValueObjects\DateTime\DateTime;
 use App\Convention\ValueObjects\Identity\Identity;
 
@@ -24,9 +24,9 @@ interface StatementContract
     public function amount(): float;
 
     /**
-     * @return DateTime
+     * @return \DateTimeImmutable
      */
-    public function createdAt(): DateTime;
+    public function createdAt(): \DateTimeImmutable;
 
     /**
      * @return TermContract|null
@@ -38,4 +38,10 @@ interface StatementContract
      * @return StatementContract
      */
     public function assignTerm(TermContract $term): StatementContract;
+
+    /**
+     * @param float $amount
+     * @return StatementContract
+     */
+    public function updateAmount(float $amount): StatementContract;
 }
