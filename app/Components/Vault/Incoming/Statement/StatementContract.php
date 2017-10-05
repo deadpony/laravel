@@ -2,7 +2,7 @@
 
 namespace App\Components\Vault\Incoming\Statement;
 
-use App\Components\Vault\Incoming\Statement\Account\TermContract;
+use App\Components\Vault\Incoming\Statement\Term\TermContract;
 use App\Convention\ValueObjects\DateTime\DateTime;
 use App\Convention\ValueObjects\Identity\Identity;
 
@@ -32,4 +32,10 @@ interface StatementContract
      * @return TermContract|null
      */
     public function term();
+
+    /**
+     * @param TermContract $term
+     * @return StatementContract
+     */
+    public function assignTerm(TermContract $term): StatementContract;
 }

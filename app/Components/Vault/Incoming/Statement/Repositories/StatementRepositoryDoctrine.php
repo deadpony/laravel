@@ -3,6 +3,7 @@
 namespace App\Components\Vault\Incoming\Statement\Repositories;
 
 use App\Components\Vault\Incoming\Statement\StatementContract;
+use App\Components\Vault\Incoming\Statement\StatementEntity;
 use App\Convention\ValueObjects\Identity\Identity;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -19,7 +20,7 @@ class StatementRepositoryDoctrine implements StatementRepositoryContract
     public function __construct(EntityManagerInterface $manager)
     {
         $this->manager    = $manager;
-        $this->statementsEntityRepository = $this->manager->getRepository(StatementContract::class);
+        $this->statementsEntityRepository = $this->manager->getRepository(StatementEntity::class);
     }
 
     /**
@@ -28,9 +29,8 @@ class StatementRepositoryDoctrine implements StatementRepositoryContract
      */
     public function byIdentity(Identity $identity): StatementContract
     {
+        /** @var StatementEntity $entity */
         $entity = $this->statementsEntityRepository->find($identity->id());
-
-        dd($entity);
 
         if ($entity === null) {
             throw new \Exception("Not Found Exception");
@@ -63,6 +63,8 @@ class StatementRepositoryDoctrine implements StatementRepositoryContract
     public function persist(StatementContract $statement): StatementContract
     {
         $this->manager->persist($statement);
+        $this->manager->flush();
+        $this->manager->clear();
 
         return $statement;
     }

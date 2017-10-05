@@ -10,38 +10,38 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="statements")
+ * @ORM\Table(name="incoming_statements")
  */
 class StatementEntity implements StatementContract
 {
     /**
      * @var Identity
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="none")
-     * @ORM\Column(type="string",unique="true")
+     * @ORM\Column(type="string",unique=true)
      */
     private $id;
 
     /**
      * @var string
-     * @ORM\Column(type="string",nullable="false")
+     * @ORM\Column(type="string",nullable=false)
      */
     private $type;
 
     /**
      * @var float
-     * @ORM\Column(type="float",nullable="false")
+     * @ORM\Column(type="float",nullable=false)
      */
     private $amount;
 
     /**
      * @var DateTime
-     * @ORM\Column(type="datetime",nullable="false",column="created_at")
+     * @ORM\Column(type="datetime",nullable=false,name="created_at")
      */
     private $createdAt;
 
     /**
      * @var TermContract|null;
+     * @ORM\OneToOne(targetEntity="App\Components\Vault\Incoming\Statement\Term\TermEntity", mappedBy="statement", orphanRemoval=true, cascade={"persist", "remove", "merge"})
      */
     private $term;
 
@@ -59,7 +59,7 @@ class StatementEntity implements StatementContract
 
         $this->term = $term;
 
-        $this->createdAt = new DateTime(new \DateTimeImmutable());
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     /**
@@ -69,6 +69,7 @@ class StatementEntity implements StatementContract
     private function setType(string $type): StatementEntity
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -79,7 +80,7 @@ class StatementEntity implements StatementContract
      */
     private function setAmount(float $amount): StatementEntity
     {
-        if ($this->amount > 0 === false) {
+        if ($amount > 0 === false) {
             throw new \InvalidArgumentException("Amount can't be a zero value");
         }
 
@@ -128,4 +129,23 @@ class StatementEntity implements StatementContract
         return $this->term;
     }
 
+    public function destroyTerm()
+    {
+        $this->term = null;
+    }
+
+    /**
+     * @param TermContract $term
+     * @return StatementContract
+     */
+    public function assignTerm(TermContract $term): StatementContract
+    {
+        if ($this->term() instanceof TermContract) {
+            throw new \InvalidArgumentException("Term already assigned");
+        }
+
+        $this->term = $term;
+
+        return $this;
+    }
 }

@@ -11,18 +11,25 @@
 |
 */
 Route::get('/', function () {
-    $repo = app()->make(\App\Components\Vault\Incoming\Statement\Repositories\StatementRepositoryDoctrine::class);
+    $repo = app()->make(\App\Components\Vault\Incoming\Statement\Repositories\StatementRepositoryContract::class);
 
-    $statement = $repo->getOne();
-    $statement->account = new \App\Components\Vault\Incoming\Statement\Account\TermEntity(
-        'type',
-        10,
-        \Carbon\Carbon::now(),
-        $statement
-    );
-    $statement->account->months = 10;
-    $repo->update($statement, []);
-    dd();
+    $statement = $repo->byIdentity(new \App\Convention\ValueObjects\Identity\Identity('0abbf7b8-2f32-4873-b755-f6ba97429f29'));
+
+    try {
+        $statement->assignTerm(
+            new \App\Components\Vault\Incoming\Statement\Term\TermEntity(
+                \App\Convention\Generators\Identity\IdentityGenerator::next(),
+                8,
+                $statement
+            )
+        );
+    } catch (\InvalidArgumentException $ex) {
+        $statement->destroyTerm();
+    }
+
+    $repo->persist($statement);
+
+    dd($statement);
 
 });
 

@@ -27,4 +27,10 @@ interface TermContract
      * @return StatementContract
      */
     public function statement(): StatementContract;
+
+    /**
+     * @param int $months
+     * @return TermContract
+     */
+    public function updateMonths(int $months): TermContract;
 }

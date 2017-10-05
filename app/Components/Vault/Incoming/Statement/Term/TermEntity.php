@@ -6,24 +6,37 @@ use App\Components\Vault\Incoming\Statement\StatementContract;
 use App\Convention\ValueObjects\DateTime\DateTime;
 use App\Convention\ValueObjects\Identity\Identity;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="incoming_statements_terms")
+ */
 class TermEntity implements TermContract
 {
     /**
      * @var Identity
+     * @ORM\Id
+     * @ORM\Column(type="string",unique=true)
      */
     private $id;
+
     /**
-     * @var int
+     * @var string
+     * @ORM\Column(type="integer",nullable=false)
      */
     private $months;
 
     /**
      * @var DateTime
+     * @ORM\Column(type="datetime",nullable=false,name="created_at")
      */
     private $createdAt;
 
     /**
      * @var StatementContract
+     * @ORM\OneToOne(targetEntity="App\Components\Vault\Incoming\Statement\StatementEntity", inversedBy="term", cascade={"persist", "remove", "merge"})
+     * @ORM\JoinColumn(name="statement_id", referencedColumnName="id")
      */
     private $statement;
 
@@ -39,7 +52,7 @@ class TermEntity implements TermContract
 
         $this->statement = $statement;
 
-        $this->createdAt = new DateTime(new \DateTimeImmutable());
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     /**
@@ -49,7 +62,7 @@ class TermEntity implements TermContract
      */
     private function setMonths(int $months): TermEntity
     {
-        if ($this->months > 0 === false) {
+        if ($months > 0 === false) {
             throw new \InvalidArgumentException("Months can't be a zero value");
         }
 
@@ -88,5 +101,16 @@ class TermEntity implements TermContract
     public function statement(): StatementContract
     {
         return $this->statement;
+    }
+
+    /**
+     * @param int $months
+     * @return TermContract
+     */
+    public function updateMonths(int $months): TermContract
+    {
+        $this->setMonths($months);
+
+        return $this;
     }
 }
