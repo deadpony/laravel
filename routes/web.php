@@ -10,7 +10,21 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/', function () {
+    $repo = app()->make(\App\Components\Vault\Incoming\Statement\Repositories\StatementRepositoryDoctrine::class);
 
+    $statement = $repo->getOne();
+    $statement->account = new \App\Components\Vault\Incoming\Statement\Account\TermEntity(
+        'type',
+        10,
+        \Carbon\Carbon::now(),
+        $statement
+    );
+    $statement->account->months = 10;
+    $repo->update($statement, []);
+    dd();
+
+});
 
 Route::group(['prefix' => 'treasurer'], function () {
     Route::get('test', function () {
