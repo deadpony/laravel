@@ -128,11 +128,6 @@ class StatementEntity implements StatementContract
         return $this->term;
     }
 
-    public function destroyTerm()
-    {
-        $this->term = null;
-    }
-
     /**
      * @param TermContract $term
      * @return StatementContract
