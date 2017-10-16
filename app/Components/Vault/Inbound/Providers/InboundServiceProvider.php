@@ -2,6 +2,8 @@
 
 namespace App\Components\Vault\Installment\Providers;
 
+use App\Components\Vault\Inbound\Services\Collector\CollectorService;
+use App\Components\Vault\Inbound\Services\Collector\CollectorServiceContract;
 use App\Components\Vault\Inbound\Wallet\Repositories\WalletRepositoryContract;
 use App\Components\Vault\Inbound\Wallet\Repositories\WalletRepositoryDoctrine;
 use App\Components\Vault\Inbound\Wallet\WalletContract;
@@ -18,6 +20,7 @@ class InboundServiceProvider extends ServiceProvider
     public function boot()
     {
     }
+
     /**
      * Register any application services.
      *
@@ -32,5 +35,10 @@ class InboundServiceProvider extends ServiceProvider
         $this->app->bind(
             WalletRepositoryContract::class,
             WalletRepositoryDoctrine::class);
+
+        $this->app->bind(
+            CollectorServiceContract::class,
+            CollectorService::class
+        );
     }
 }
