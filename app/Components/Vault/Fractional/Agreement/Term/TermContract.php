@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Components\Vault\Installment\Statement\Term;
+namespace App\Components\Vault\Fractional\Agreement\Term;
 
-use App\Components\Vault\Installment\Statement\StatementContract;
-use App\Convention\ValueObjects\DateTime\DateTime;
+use App\Components\Vault\Fractional\Agreement\AgreementContract;
 use App\Convention\ValueObjects\Identity\Identity;
 
 interface TermContract
@@ -39,9 +38,9 @@ interface TermContract
     public function createdAt(): \DateTime;
 
     /**
-     * @return StatementContract
+     * @return AgreementContract
      */
-    public function statement(): StatementContract;
+    public function agreement(): AgreementContract;
 
     /**
      * @param int $months

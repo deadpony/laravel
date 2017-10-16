@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Components\Vault\Installment\Statement;
+namespace App\Components\Vault\Fractional\Agreement;
 
-use App\Components\Vault\Installment\Statement\Term\TermContract;
+use App\Components\Vault\Fractional\Agreement\Term\TermContract;
 use App\Convention\ValueObjects\Identity\Identity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="installment_statements")
+ * @ORM\Table(name="fractional_agreements")
  */
-class StatementEntity implements StatementContract
+class AgreementEntity implements AgreementContract
 {
     /**
      * @var Identity
@@ -19,12 +19,6 @@ class StatementEntity implements StatementContract
      * @ORM\Column(type="identity",unique=true)
      */
     private $id;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string",nullable=false)
-     */
-    private $type;
 
     /**
      * @var float
@@ -40,20 +34,18 @@ class StatementEntity implements StatementContract
 
     /**
      * @var TermContract|null;
-     * @ORM\OneToOne(targetEntity="App\Components\Vault\Installment\Statement\Term\TermEntity", mappedBy="statement", orphanRemoval=true, cascade={"persist", "remove", "merge"})
+     * @ORM\OneToOne(targetEntity="App\Components\Vault\Fractional\Agreement\Term\TermEntity", mappedBy="agreement", orphanRemoval=true, cascade={"persist", "remove", "merge"})
      */
     private $term;
 
     /**
      * @param Identity $id
-     * @param string $type
      * @param float $amount
      * @param TermContract|null $term
      */
-    public function __construct(Identity $id, string $type, float $amount, TermContract $term = null)
+    public function __construct(Identity $id, float $amount, TermContract $term = null)
     {
         $this->id = $id;
-        $this->setType($type);
         $this->setAmount($amount);
 
         $this->term = $term;
@@ -62,22 +54,11 @@ class StatementEntity implements StatementContract
     }
 
     /**
-     * @param string $type
-     * @return StatementEntity
-     */
-    private function setType(string $type): StatementEntity
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
      * @param float $amount
-     * @return StatementEntity
+     * @return AgreementEntity
      * @throws \InvalidArgumentException
      */
-    private function setAmount(float $amount): StatementEntity
+    private function setAmount(float $amount): AgreementEntity
     {
         if ($amount > 0 === false) {
             throw new \InvalidArgumentException("Amount can't be a zero value");
@@ -94,14 +75,6 @@ class StatementEntity implements StatementContract
     public function id(): Identity
     {
         return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function type(): string
-    {
-        return $this->type;
     }
 
     /**
@@ -130,9 +103,9 @@ class StatementEntity implements StatementContract
 
     /**
      * @param TermContract $term
-     * @return StatementContract
+     * @return AgreementContract
      */
-    public function assignTerm(TermContract $term): StatementContract
+    public function assignTerm(TermContract $term): AgreementContract
     {
         if ($this->term() instanceof TermContract) {
             throw new \InvalidArgumentException("Term already assigned");
@@ -145,9 +118,9 @@ class StatementEntity implements StatementContract
 
     /**
      * @param float $amount
-     * @return StatementContract
+     * @return AgreementContract
      */
-    public function updateAmount(float $amount): StatementContract
+    public function updateAmount(float $amount): AgreementContract
     {
         $this->setAmount($amount);
 

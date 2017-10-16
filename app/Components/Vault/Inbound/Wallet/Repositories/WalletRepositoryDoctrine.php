@@ -87,26 +87,26 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
     }
 
     /**
-     * @param WalletContract $statement
+     * @param WalletContract $wallet
      * @return WalletContract
      */
-    public function persist(WalletContract $statement): WalletContract
+    public function persist(WalletContract $wallet): WalletContract
     {
-        $this->manager->persist($statement);
+        $this->manager->persist($wallet);
         $this->manager->flush();
         $this->manager->clear();
 
-        return $statement;
+        return $wallet;
     }
 
 
     /**
-     * @param WalletContract $statement
+     * @param WalletContract $wallet
      * @return bool
      */
-    public function destroy(WalletContract $statement): bool
+    public function destroy(WalletContract $wallet): bool
     {
-        $this->manager->remove($statement);
+        $this->manager->remove($wallet);
         $this->manager->flush();
         $this->manager->clear();
 

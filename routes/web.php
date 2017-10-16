@@ -11,31 +11,31 @@
 |
 */
 
-Route::group(['prefix' => 'installment'], function () {
+Route::group(['prefix' => 'fractional'], function () {
     Route::get('test', function () {
 
-        $service = app()->make(\App\Components\Vault\Installment\Services\Collector\CollectorServiceContract::class);
+        $service = app()->make(\App\Components\Vault\Fractional\Services\Collector\CollectorServiceContract::class);
 
         $statementID             = $service
-            ->signStatement(300);
+            ->collect(300);
 
         $statementResignedTermID = $service
-            ->signTerm(6, 10)
-            ->resignStatement($statementID, 300);
+            ->assignTerm(6, 10)
+            ->change($statementID, 300);
 
         $statementWithTermID     = $service
-            ->signTerm(12, 10)
-            ->signStatement(500);
+            ->assignTerm(12, 10)
+            ->collect(500);
 
         $statementResignedID     = $service
-            ->resignStatement($statementID, 1000);
+            ->change($statementID, 1000);
 
         return response()->json([
             $statementID,
             $statementWithTermID,
             $statementResignedID,
             $statementResignedTermID,
-            $service->viewStatement($statementResignedTermID)
+            $service->view($statementResignedTermID)
         ]);
     });
 });

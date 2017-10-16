@@ -27,16 +27,16 @@ interface WalletRepositoryContract
     public function getAll(): Collection;
 
     /**
-     * @param WalletContract $statement
+     * @param WalletContract $wallet
      * @return WalletContract
      */
-    public function persist(WalletContract $statement): WalletContract;
+    public function persist(WalletContract $wallet): WalletContract;
 
     /**
-     * @param WalletContract $statement
+     * @param WalletContract $wallet
      * @return bool
      */
-    public function destroy(WalletContract $statement): bool;
+    public function destroy(WalletContract $wallet): bool;
 
     /**
      * @param string $key

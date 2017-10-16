@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInstallmentStatementsTable extends Migration
+class CreateFractionalAgreementTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class CreateInstallmentStatementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('installment_statements', function (Blueprint $table) {
+        Schema::create('fractional_agreements', function (Blueprint $table) {
             $table->string('id', 36)->unique();
-            $table->string('type', 64);
             $table->float('amount', 8,2);
             $table->timestamps();
         });
@@ -28,6 +27,6 @@ class CreateInstallmentStatementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('installment_statements');
+        Schema::dropIfExists('fractional_agreements');
     }
 }

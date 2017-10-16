@@ -1,21 +1,16 @@
 <?php
 
-namespace App\Components\Vault\Installment\Statement;
+namespace App\Components\Vault\Fractional\Agreement;
 
-use App\Components\Vault\Installment\Statement\Term\TermContract;
+use App\Components\Vault\Fractional\Agreement\Term\TermContract;
 use App\Convention\ValueObjects\Identity\Identity;
 
-interface StatementContract
+interface AgreementContract
 {
     /**
      * @return Identity
      */
     public function id(): Identity;
-
-    /**
-     * @return string
-     */
-    public function type(): string;
 
     /**
      * @return float
@@ -34,13 +29,13 @@ interface StatementContract
 
     /**
      * @param TermContract $term
-     * @return StatementContract
+     * @return AgreementContract
      */
-    public function assignTerm(TermContract $term): StatementContract;
+    public function assignTerm(TermContract $term): AgreementContract;
 
     /**
      * @param float $amount
-     * @return StatementContract
+     * @return AgreementContract
      */
-    public function updateAmount(float $amount): StatementContract;
+    public function updateAmount(float $amount): AgreementContract;
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInstallmentStatementsTermsTable extends Migration
+class CreateFractionalAgreementsTermsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateInstallmentStatementsTermsTable extends Migration
      */
     public function up()
     {
-        Schema::create('installment_statements_terms', function (Blueprint $table) {
+        Schema::create('fractional_agreements_terms', function (Blueprint $table) {
             $table->string('id', 36)->unique();
-            $table->string('statement_id', 36)->unique();
-            $table->foreign('statement_id')->references('id')->on('installment_statements')->onDelete('cascade');
+            $table->string('agreement_id', 36)->unique();
+            $table->foreign('agreement_id')->references('id')->on('fractional_agreements')->onDelete('cascade');
             $table->tinyInteger('months');
             $table->float('setup_fee', 8,2);
             $table->float('monthly_fee', 8,2);
@@ -32,6 +32,6 @@ class CreateInstallmentStatementsTermsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('installment_statements_terms');
+        Schema::dropIfExists('fractional_agreements_terms');
     }
 }

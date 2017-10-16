@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Components\Vault\Installment\Statement\Term;
+namespace App\Components\Vault\Fractional\Agreement\Term;
 
-use App\Components\Vault\Installment\Statement\StatementContract;
+use App\Components\Vault\Fractional\Agreement\AgreementContract;
 use App\Convention\ValueObjects\Identity\Identity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="installment_statements_terms")
+ * @ORM\Table(name="fractional_agreements_terms")
  */
 class TermEntity implements TermContract
 {
@@ -51,11 +51,11 @@ class TermEntity implements TermContract
     private $createdAt;
 
     /**
-     * @var StatementContract
-     * @ORM\OneToOne(targetEntity="App\Components\Vault\Installment\Statement\StatementEntity", inversedBy="term", cascade={"persist", "remove", "merge"})
-     * @ORM\JoinColumn(name="statement_id", referencedColumnName="id")
+     * @var AgreementContract
+     * @ORM\OneToOne(targetEntity="App\Components\Vault\Fractional\Agreement\AgreementEntity", inversedBy="term", cascade={"persist", "remove", "merge"})
+     * @ORM\JoinColumn(name="agreement_id", referencedColumnName="id")
      */
-    private $statement;
+    private $agreement;
 
 
     /**
@@ -64,9 +64,9 @@ class TermEntity implements TermContract
      * @param int $deadlineDay
      * @param float $setupFee
      * @param float $monthlyFee
-     * @param StatementContract $statement
+     * @param AgreementContract $agreement
      */
-    public function __construct(Identity $id, int $months, int $deadlineDay, float $setupFee, float $monthlyFee, StatementContract $statement)
+    public function __construct(Identity $id, int $months, int $deadlineDay, float $setupFee, float $monthlyFee, AgreementContract $agreement)
     {
         $this->id = $id;
 
@@ -78,9 +78,9 @@ class TermEntity implements TermContract
 
         $this->createdAt = new \DateTimeImmutable();
 
-        $this->statement = $statement;
+        $this->agreement = $agreement;
 
-        $statement->assignTerm($this);
+        $agreement->assignTerm($this);
     }
 
     /**
@@ -168,11 +168,11 @@ class TermEntity implements TermContract
     }
 
     /**
-     * @return StatementContract
+     * @return AgreementContract
      */
-    public function statement(): StatementContract
+    public function agreement(): AgreementContract
     {
-        return $this->statement;
+        return $this->agreement;
     }
 
     /**

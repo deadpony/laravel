@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Components\Vault\Outbound\Wallet\Repositories;
+namespace App\Components\Vault\Fractional\Agreement\Repositories;
 
-use App\Components\Vault\Outbound\Wallet\Repositories\Exceptions\NotFoundException;
-use App\Components\Vault\Outbound\Wallet\WalletContract;
-use App\Components\Vault\Outbound\Wallet\WalletEntity;
+use App\Components\Vault\Fractional\Agreement\AgreementContract;
+use App\Components\Vault\Fractional\Agreement\AgreementEntity;
+use App\Components\Vault\Fractional\Agreement\Repositories\Exceptions\NotFoundException;
 use App\Convention\ValueObjects\Identity\Identity;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Illuminate\Support\Collection;
 
-class WalletRepositoryDoctrine implements WalletRepositoryContract
+class AgreementRepositoryDoctrine implements AgreementRepositoryContract
 {
     /** @var EntityManagerInterface */
     private $manager;
@@ -24,13 +24,11 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
      */
     private $builder;
 
-    /**
-     * @param EntityManagerInterface $manager
-     */
     public function __construct(EntityManagerInterface $manager)
     {
-        $this->manager          = $manager;
-        $this->entityRepository = $this->manager->getRepository(WalletEntity::class);
+        $this->manager                    = $manager;
+        $this->entityRepository = $this->manager->getRepository(AgreementEntity::class);
+
         $this->refreshBuilder();
     }
 
@@ -39,19 +37,19 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
      */
     private function refreshBuilder() {
 
-        $this->builder = $this->entityRepository->createQueryBuilder('ow');
+        $this->builder = $this->entityRepository->createQueryBuilder('iw');
 
         return $this->builder;
     }
 
     /**
      * @param Identity $identity
-     * @return WalletContract
+     * @return AgreementContract
      * @throws NotFoundException
      */
     public function byIdentity(Identity $identity)
     {
-        /** @var WalletContract $entity */
+        /** @var AgreementEntity $entity */
         $entity = $this->entityRepository->find($identity);
 
         if ($entity === null) {
@@ -63,7 +61,7 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
 
 
     /**
-     * @return WalletContract|null
+     * @return AgreementContract|null
      */
     public function getOne()
     {
@@ -87,26 +85,26 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
     }
 
     /**
-     * @param WalletContract $wallet
-     * @return WalletContract
+     * @param AgreementContract $agreement
+     * @return AgreementContract
      */
-    public function persist(WalletContract $wallet): WalletContract
+    public function persist(AgreementContract $agreement): AgreementContract
     {
-        $this->manager->persist($wallet);
+        $this->manager->persist($agreement);
         $this->manager->flush();
         $this->manager->clear();
 
-        return $wallet;
+        return $agreement;
     }
 
 
     /**
-     * @param WalletContract $wallet
+     * @param AgreementContract $agreement
      * @return bool
      */
-    public function destroy(WalletContract $wallet): bool
+    public function destroy(AgreementContract $agreement): bool
     {
-        $this->manager->remove($wallet);
+        $this->manager->remove($agreement);
         $this->manager->flush();
         $this->manager->clear();
 
@@ -118,9 +116,9 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
      * @param string $operator
      * @param $value
      * @param bool $orCondition
-     * @return WalletRepositoryContract
+     * @return AgreementRepositoryContract
      */
-    public function filter(string $key, string $operator, $value, bool $orCondition = false): WalletRepositoryContract
+    public function filter(string $key, string $operator, $value, bool $orCondition = false): AgreementRepositoryContract
     {
         if ($orCondition) {
             $this->builder->orWhere("ow.{$key} {$operator} :{$key}");
