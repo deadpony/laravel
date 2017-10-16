@@ -1,36 +1,36 @@
 <?php
 
-namespace App\Components\Vault\Installment\Statement\Repositories;
+namespace App\Components\Vault\Inbound\Wallet\Repositories;
 
-use App\Components\Vault\Installment\Statement\StatementContract;
-use App\Components\Vault\Installment\Statement\StatementEntity;
+use App\Components\Vault\Inbound\Wallet\WalletContract;
+use App\Components\Vault\Inbound\Wallet\WalletEntity;
 use App\Convention\ValueObjects\Identity\Identity;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Illuminate\Support\Collection;
 
-class StatementRepositoryDoctrine implements StatementRepositoryContract
+class WalletRepositoryDoctrine implements WalletRepositoryContract
 {
     /** @var EntityManagerInterface */
     private $manager;
 
     /** @var EntityRepository */
-    private $statementsEntityRepository;
+    private $entityRepository;
 
     public function __construct(EntityManagerInterface $manager)
     {
-        $this->manager                    = $manager;
-        $this->statementsEntityRepository = $this->manager->getRepository(StatementEntity::class);
+        $this->manager          = $manager;
+        $this->entityRepository = $this->manager->getRepository(WalletEntity::class);
     }
 
     /**
      * @param Identity $identity
-     * @return StatementContract|null
+     * @return WalletContract|null
      */
     public function byIdentity(Identity $identity)
     {
-        /** @var StatementEntity $entity */
-        $entity = $this->statementsEntityRepository->find($identity);
+        /** @var WalletContract $entity */
+        $entity = $this->entityRepository->find($identity);
 
         if ($entity === null) {
             throw new \Exception("Not Found Exception");
@@ -41,7 +41,7 @@ class StatementRepositoryDoctrine implements StatementRepositoryContract
 
 
     /**
-     * @return StatementContract|null
+     * @return WalletContract|null
      */
     public function getOne()
     {
@@ -57,10 +57,10 @@ class StatementRepositoryDoctrine implements StatementRepositoryContract
     }
 
     /**
-     * @param StatementContract $statement
-     * @return StatementContract
+     * @param WalletContract $statement
+     * @return WalletContract
      */
-    public function persist(StatementContract $statement): StatementContract
+    public function persist(WalletContract $statement): WalletContract
     {
         $this->manager->persist($statement);
         $this->manager->flush();
@@ -71,10 +71,10 @@ class StatementRepositoryDoctrine implements StatementRepositoryContract
 
 
     /**
-     * @param StatementContract $statement
+     * @param WalletContract $statement
      * @return bool
      */
-    public function destroy(StatementContract $statement): bool
+    public function destroy(WalletContract $statement): bool
     {
         // TODO: Implement delete() method.
     }
@@ -83,9 +83,9 @@ class StatementRepositoryDoctrine implements StatementRepositoryContract
      * @param string $key
      * @param string $operator
      * @param $value
-     * @return StatementRepositoryContract
+     * @return WalletRepositoryContract
      */
-    public function filter(string $key, string $operator, $value): StatementRepositoryContract
+    public function filter(string $key, string $operator, $value): WalletRepositoryContract
     {
         $this->mapper->where($key, $operator, $value);
 

@@ -3,7 +3,6 @@
 namespace App\Components\Vault\Installment\Statement;
 
 use App\Components\Vault\Installment\Statement\Term\TermContract;
-use App\Convention\ValueObjects\DateTime\DateTime;
 use App\Convention\ValueObjects\Identity\Identity;
 
 interface StatementContract
