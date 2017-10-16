@@ -4,6 +4,8 @@ namespace App\Components\Vault\Inbound\Wallet;
 
 use App\Convention\ValueObjects\Identity\Identity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * @ORM\Entity
  * @ORM\Table(name="inbound_wallet")

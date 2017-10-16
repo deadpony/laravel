@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\Vault\Installment\Providers;
+namespace App\Components\Vault\Inbound\Providers;
 
 use App\Components\Vault\Inbound\Services\Collector\CollectorService;
 use App\Components\Vault\Inbound\Services\Collector\CollectorServiceContract;

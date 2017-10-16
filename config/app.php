@@ -178,6 +178,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         \App\Components\Vault\Installment\Providers\InstallmentServiceProvider::class,
+        \App\Components\Vault\Inbound\Providers\InboundServiceProvider::class,
 
     ],
 

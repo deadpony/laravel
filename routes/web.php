@@ -40,3 +40,27 @@ Route::group(['prefix' => 'installment'], function () {
     });
 });
 
+
+Route::group(['prefix' => 'incoming'], function () {
+    Route::group(['prefix' => 'wallet'], function () {
+        Route::get('test', function () {
+
+            $service = app()->make(\App\Components\Vault\Inbound\Services\Collector\CollectorService::class);
+
+            $statementID             = $service
+                ->collect('salary', 3000);
+
+            $statementIDChanged      = $service
+                ->change($statementID, 2000);
+
+
+            return response()->json([
+                $statementID,
+                $statementIDChanged,
+                $service->view($statementIDChanged),
+                $service->refund($statementID)
+            ]);
+        });
+    });
+
+});

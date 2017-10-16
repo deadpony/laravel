@@ -3,8 +3,8 @@
 namespace App\Components\Vault\Inbound\Services\Collector;
 
 use App\Components\Vault\Inbound\Wallet\Repositories\WalletRepositoryContract;
-use App\Components\Vault\Inbound\Wallet\WalletContract;
 use App\Components\Vault\Inbound\Wallet\WalletEntity;
+use App\Convention\Generators\Identity\IdentityGenerator;
 use App\Convention\ValueObjects\Identity\Identity;
 
 class CollectorService implements CollectorServiceContract
@@ -29,11 +29,11 @@ class CollectorService implements CollectorServiceContract
      */
     public function collect(string $type, float $amount): string
     {
-        $entity = app()->make(WalletEntity::class, ['type' => $type, 'amount' => $amount]);
+        $entity = app()->make(WalletEntity::class, ['id' => IdentityGenerator::next(), 'type' => $type, 'amount' => $amount]);
 
         $wallet = $this->repository->persist($entity);
 
-        return (string)$wallet->id();
+        return (string) $wallet->id();
     }
 
     /**
@@ -43,13 +43,10 @@ class CollectorService implements CollectorServiceContract
      */
     public function change(string $identity, float $amount): string
     {
-        /** @var WalletContract $wallet */
         $wallet = $this->repository->byIdentity(new Identity($identity));
+        $wallet->updateAmount($amount);
 
-        if ($wallet) {
-            $wallet->updateAmount($amount);
-            $this->repository->persist($wallet);
-        }
+        $this->repository->persist($wallet);
 
         return (string) $wallet->id();
     }
@@ -60,14 +57,9 @@ class CollectorService implements CollectorServiceContract
      */
     public function refund(string $identity): bool
     {
-        /** @var WalletContract $wallet */
         $wallet = $this->repository->byIdentity(new Identity($identity));
 
-        if ($wallet) {
-            return $this->repository->destroy($wallet);
-        }
-
-        return false;
+        return $this->repository->destroy($wallet);
     }
 
     /**
@@ -76,16 +68,13 @@ class CollectorService implements CollectorServiceContract
      */
     public function view(string $identity): array
     {
-        /** @var WalletContract $wallet */
         $wallet = $this->repository->byIdentity(new Identity($identity));
 
-        if ($wallet) {
-            return [
-                'id' => (string) $wallet->id(),
-                'type' => $wallet->type(),
-                'amount' => $wallet->amount(),
-            ];
-        }
+        return [
+            'id' => (string) $wallet->id(),
+            'type' => $wallet->type(),
+            'amount' => $wallet->amount(),
+        ];
     }
 
 }

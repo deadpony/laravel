@@ -2,11 +2,13 @@
 
 namespace App\Components\Vault\Inbound\Wallet\Repositories;
 
+use App\Components\Vault\Inbound\Wallet\Repositories\Exceptions\NotFoundException;
 use App\Components\Vault\Inbound\Wallet\WalletContract;
 use App\Components\Vault\Inbound\Wallet\WalletEntity;
 use App\Convention\ValueObjects\Identity\Identity;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Illuminate\Support\Collection;
 
 class WalletRepositoryDoctrine implements WalletRepositoryContract
@@ -17,15 +19,35 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
     /** @var EntityRepository */
     private $entityRepository;
 
+    /**
+     * @var QueryBuilder
+     */
+    private $builder;
+
+    /**
+     * @param EntityManagerInterface $manager
+     */
     public function __construct(EntityManagerInterface $manager)
     {
         $this->manager          = $manager;
         $this->entityRepository = $this->manager->getRepository(WalletEntity::class);
+        $this->refreshBuilder();
+    }
+
+    /**
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    private function refreshBuilder() {
+
+        $this->builder = $this->entityRepository->createQueryBuilder('iw');
+
+        return $this->builder;
     }
 
     /**
      * @param Identity $identity
-     * @return WalletContract|null
+     * @return WalletContract
+     * @throws NotFoundException
      */
     public function byIdentity(Identity $identity)
     {
@@ -33,7 +55,7 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
         $entity = $this->entityRepository->find($identity);
 
         if ($entity === null) {
-            throw new \Exception("Not Found Exception");
+            throw new NotFoundException("Not Found Exception");
         }
 
         return $entity;
@@ -45,7 +67,11 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
      */
     public function getOne()
     {
-        // TODO: Implement getAll() method.
+        $result = $this->builder->getQuery()->getOneOrNullResult();
+
+        $this->refreshBuilder();
+
+        return $result;
     }
 
     /**
@@ -53,7 +79,11 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
      */
     public function getAll(): Collection
     {
-        // TODO: Implement getAll() method.
+        $results = $this->builder->getQuery()->getResult();
+
+        $this->refreshBuilder();
+
+        return collect($results);
     }
 
     /**
@@ -76,18 +106,29 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
      */
     public function destroy(WalletContract $statement): bool
     {
-        // TODO: Implement delete() method.
+        $this->manager->remove($statement);
+        $this->manager->flush();
+        $this->manager->clear();
+
+        return true;
     }
 
     /**
      * @param string $key
      * @param string $operator
      * @param $value
+     * @param bool $orCondition
      * @return WalletRepositoryContract
      */
-    public function filter(string $key, string $operator, $value): WalletRepositoryContract
+    public function filter(string $key, string $operator, $value, bool $orCondition = false): WalletRepositoryContract
     {
-        $this->mapper->where($key, $operator, $value);
+        if ($orCondition) {
+            $this->builder->orWhere("iw.{$key} {$operator} :{$key}");
+        } else {
+            $this->builder->andWhere("iw.{$key} {$operator} :{$key}");
+        }
+
+        $this->builder->setParameter($key, $value);
 
         return $this;
     }

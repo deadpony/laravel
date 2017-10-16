@@ -2,6 +2,7 @@
 
 namespace App\Components\Vault\Inbound\Wallet\Repositories;
 
+use App\Components\Vault\Inbound\Wallet\Repositories\Exceptions\NotFoundException;
 use App\Components\Vault\Inbound\Wallet\WalletContract;
 use App\Convention\ValueObjects\Identity\Identity;
 use Illuminate\Support\Collection;
@@ -10,7 +11,8 @@ interface WalletRepositoryContract
 {
     /**
      * @param Identity $identity
-     * @return WalletContract|null
+     * @return WalletContract
+     * @throws NotFoundException
      */
     public function byIdentity(Identity $identity);
 
@@ -40,7 +42,8 @@ interface WalletRepositoryContract
      * @param string $key
      * @param string $operator
      * @param $value
+     * @param bool $orCondition
      * @return WalletRepositoryContract
      */
-    public function filter(string $key, string $operator, $value): WalletRepositoryContract;
+    public function filter(string $key, string $operator, $value, bool $orCondition = false): WalletRepositoryContract;
 }
