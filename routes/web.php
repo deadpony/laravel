@@ -41,7 +41,7 @@ Route::group(['prefix' => 'installment'], function () {
 });
 
 
-Route::group(['prefix' => 'incoming'], function () {
+Route::group(['prefix' => 'inbound'], function () {
     Route::group(['prefix' => 'wallet'], function () {
         Route::get('test', function () {
 
@@ -53,6 +53,27 @@ Route::group(['prefix' => 'incoming'], function () {
             $statementIDChanged      = $service
                 ->change($statementID, 2000);
 
+            return response()->json([
+                $statementID,
+                $statementIDChanged,
+                $service->view($statementIDChanged),
+                $service->refund($statementID)
+            ]);
+        });
+    });
+});
+
+Route::group(['prefix' => 'outbound'], function () {
+    Route::group(['prefix' => 'wallet'], function () {
+        Route::get('test', function () {
+
+            $service = app()->make(\App\Components\Vault\Outbound\Services\Collector\CollectorService::class);
+
+            $statementID             = $service
+                ->collect('outwear', 200);
+
+            $statementIDChanged      = $service
+                ->change($statementID, 300);
 
             return response()->json([
                 $statementID,
@@ -62,5 +83,4 @@ Route::group(['prefix' => 'incoming'], function () {
             ]);
         });
     });
-
 });

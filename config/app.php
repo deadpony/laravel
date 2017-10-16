@@ -179,6 +179,7 @@ return [
 
         \App\Components\Vault\Installment\Providers\InstallmentServiceProvider::class,
         \App\Components\Vault\Inbound\Providers\InboundServiceProvider::class,
+        \App\Components\Vault\Outbound\Providers\OutboundServiceProvider::class,
 
     ],
 
