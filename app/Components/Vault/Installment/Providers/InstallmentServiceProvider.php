@@ -12,7 +12,7 @@ use App\Components\Vault\Installment\Statement\Term\TermContract;
 use App\Components\Vault\Installment\Statement\Term\TermEntity;
 use Illuminate\Support\ServiceProvider;
 
-class VaultIncomingServiceProvider extends ServiceProvider
+class InstallmentServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
