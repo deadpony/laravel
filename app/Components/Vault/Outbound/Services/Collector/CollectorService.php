@@ -3,7 +3,8 @@
 namespace App\Components\Vault\Outbound\Services\Collector;
 
 use App\Components\Vault\Outbound\Wallet\Repositories\WalletRepositoryContract;
-use App\Components\Vault\Outbound\Wallet\WalletEntity;
+use App\Components\Vault\Outbound\Wallet\WalletContract;
+use App\Components\Vault\Outbound\Wallet\WalletDTO;
 use App\Convention\Generators\Identity\IdentityGenerator;
 use App\Convention\ValueObjects\Identity\Identity;
 
@@ -23,32 +24,47 @@ class CollectorService implements CollectorServiceContract
     }
 
     /**
+     * @param WalletContract $entity
+     * @return WalletDTO
+     */
+    private function toDTO(WalletContract $entity): WalletDTO
+    {
+        $dto = new WalletDTO();
+        $dto->identity = (string) $entity->id();
+        $dto->type = $entity->type();
+        $dto->amount = $entity->amount();
+        $dto->createdAt = $entity->createdAt()->format('Y-m-d H:i:s');
+
+        return $dto;
+    }
+
+    /**
      * @param string $type
      * @param float $amount
-     * @return string
+     * @return WalletDTO
      */
-    public function collect(string $type, float $amount): string
+    public function collect(string $type, float $amount): WalletDTO
     {
-        $entity = app()->make(WalletEntity::class, ['id' => IdentityGenerator::next(), 'type' => $type, 'amount' => $amount]);
+        $wallet = app()->make(WalletContract::class, ['id' => IdentityGenerator::next(), 'type' => $type, 'amount' => $amount]);
 
-        $wallet = $this->repository->persist($entity);
+        $this->repository->persist($wallet);
 
-        return (string) $wallet->id();
+        return $this->toDTO($wallet);
     }
 
     /**
      * @param string $identity
      * @param float $amount
-     * @return string
+     * @return WalletDTO
      */
-    public function change(string $identity, float $amount): string
+    public function change(string $identity, float $amount): WalletDTO
     {
         $wallet = $this->repository->byIdentity(new Identity($identity));
         $wallet->updateAmount($amount);
 
         $this->repository->persist($wallet);
 
-        return (string) $wallet->id();
+        return $this->toDTO($wallet);
     }
 
     /**
@@ -64,17 +80,13 @@ class CollectorService implements CollectorServiceContract
 
     /**
      * @param string $identity
-     * @return array
+     * @return WalletDTO
      */
-    public function view(string $identity): array
+    public function view(string $identity): WalletDTO
     {
         $wallet = $this->repository->byIdentity(new Identity($identity));
 
-        return [
-            'id' => (string) $wallet->id(),
-            'type' => $wallet->type(),
-            'amount' => $wallet->amount(),
-        ];
+        return $this->toDTO($wallet);
     }
 
 }

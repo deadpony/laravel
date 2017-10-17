@@ -51,13 +51,13 @@ Route::group(['prefix' => 'inbound'], function () {
                 ->collect('salary', 3000);
 
             $statementIDChanged      = $service
-                ->change($statementID, 2000);
+                ->change($statementID->identity, 2000);
 
             return response()->json([
-                $statementID,
-                $statementIDChanged,
-                $service->view($statementIDChanged),
-                $service->refund($statementID)
+                $statementID->identity,
+                $statementIDChanged->identity,
+                $service->view($statementIDChanged->identity),
+                $service->refund($statementID->identity)
             ]);
         });
     });
@@ -73,13 +73,13 @@ Route::group(['prefix' => 'outbound'], function () {
                 ->collect('outwear', 200);
 
             $statementIDChanged      = $service
-                ->change($statementID, 300);
+                ->change($statementID->identity, 300);
 
             return response()->json([
-                $statementID,
-                $statementIDChanged,
-                $service->view($statementIDChanged),
-                $service->refund($statementID)
+                $statementID->identity,
+                $statementIDChanged->identity,
+                $service->view($statementIDChanged->identity),
+                $service->refund($statementID->identity)
             ]);
         });
     });

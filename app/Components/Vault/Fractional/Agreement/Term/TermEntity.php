@@ -160,9 +160,9 @@ class TermEntity implements TermContract
 
 
     /**
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
-    public function createdAt(): \DateTime
+    public function createdAt(): \DateTimeInterface
     {
         return $this->createdAt;
     }

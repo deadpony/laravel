@@ -32,7 +32,7 @@ class WalletEntity implements WalletContract
     private $amount;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      * @ORM\Column(type="datetime",nullable=false,name="created_at")
      */
     private $createdAt;
@@ -103,9 +103,9 @@ class WalletEntity implements WalletContract
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
-    public function createdAt(): \DateTime
+    public function createdAt(): \DateTimeInterface
     {
         return $this->createdAt;
     }
