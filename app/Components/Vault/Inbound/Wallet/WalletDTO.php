@@ -2,14 +2,14 @@
 
 namespace App\Components\Vault\Inbound\Wallet;
 
-use App\Convention\DTO\Contracts\JsonDTO;
+use App\Convention\DTO\Objects\Contracts\JsonDTO;
 
 class WalletDTO implements JsonDTO
 {
     /**
      * @var string
      */
-    public $identity;
+    public $id;
 
     /**
      * @var string
@@ -31,7 +31,7 @@ class WalletDTO implements JsonDTO
      */
     public function __toString()
     {
-        return $this->identity;
+        return $this->id;
     }
 
     /**
@@ -48,7 +48,7 @@ class WalletDTO implements JsonDTO
     public function toArray(): array
     {
         return [
-            'identity' => $this->identity,
+            'id' => $this->id,
             'type' => $this->type,
             'amount' => $this->amount,
             'createdAt' => $this->createdAt,

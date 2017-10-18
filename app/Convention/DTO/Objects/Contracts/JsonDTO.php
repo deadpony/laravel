@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Convention\DTO\Contracts;
+namespace App\Convention\DTO\Objects\Contracts;
 
 interface JsonDTO extends \JsonSerializable
 {

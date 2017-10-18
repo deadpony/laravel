@@ -3,14 +3,14 @@
 namespace App\Components\Vault\Fractional\Agreement;
 
 use App\Components\Vault\Fractional\Agreement\Term\TermDTO;
-use App\Convention\DTO\Contracts\JsonDTO;
+use App\Convention\DTO\Objects\Contracts\JsonDTO;
 
 class AgreementDTO implements JsonDTO
 {
     /**
      * @var string
      */
-    public $identity;
+    public $id;
 
     /**
      * @var float
@@ -23,7 +23,7 @@ class AgreementDTO implements JsonDTO
     public $createdAt;
 
     /**
-     * @var TermDTO
+     * @var TermDTO|null
      */
     public $term;
 
@@ -32,7 +32,7 @@ class AgreementDTO implements JsonDTO
      */
     public function __toString()
     {
-        return $this->identity;
+        return $this->id;
     }
 
     /**
@@ -49,7 +49,7 @@ class AgreementDTO implements JsonDTO
     public function toArray(): array
     {
         return [
-            'identity' => $this->identity,
+            'id' => $this->id,
             'amount' => $this->amount,
             'createdAt' => $this->createdAt,
             'term' => $this->term->toArray(),

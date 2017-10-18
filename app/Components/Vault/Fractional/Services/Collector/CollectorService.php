@@ -3,10 +3,10 @@
 namespace App\Components\Vault\Fractional\Services\Collector;
 
 use App\Components\Vault\Fractional\Agreement\AgreementDTO;
+use App\Components\Vault\Fractional\Agreement\Mutators\DTO\Mutator;
 use App\Components\Vault\Fractional\Agreement\Repositories\AgreementRepositoryContract;
 use App\Components\Vault\Fractional\Agreement\AgreementContract;
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
-use App\Components\Vault\Fractional\Agreement\Term\TermDTO;
 use App\Convention\Generators\Identity\IdentityGenerator;
 use App\Convention\ValueObjects\Identity\Identity;
 
@@ -58,25 +58,7 @@ class CollectorService implements CollectorServiceContract
      */
     private function toDTO(AgreementContract $entity): AgreementDTO
     {
-        $dto = new AgreementDTO();
-        $dto->identity = (string) $entity->id();
-        $dto->amount = $entity->amount();
-        $dto->createdAt = $entity->createdAt()->format('Y-m-d H:i:s');
-
-        if ($entity->term() !== null) {
-            $termDTO = new TermDTO();
-            $termDTO->identity = (string) $entity->term()->id();
-            $termDTO->months = $entity->term()->months();
-            $termDTO->deadlineDay = $entity->term()->deadlineDay();
-            $termDTO->setupFee = $entity->term()->setupFee();
-            $termDTO->monthlyFee = $entity->term()->monthlyFee();
-            $termDTO->createdAt = $entity->term()->createdAt()->format('Y-m-d H:i:s');
-            $termDTO->agreement = $dto;
-
-            $dto->term = $termDTO;
-        }
-
-        return $dto;
+        return Mutator::toDTO($entity);
     }
 
     /**

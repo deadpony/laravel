@@ -2,6 +2,7 @@
 
 namespace App\Components\Vault\Inbound\Services\Collector;
 
+use App\Components\Vault\Inbound\Wallet\Mutators\DTO\Mutator;
 use App\Components\Vault\Inbound\Wallet\Repositories\WalletRepositoryContract;
 use App\Components\Vault\Inbound\Wallet\WalletContract;
 use App\Components\Vault\Inbound\Wallet\WalletDTO;
@@ -29,13 +30,7 @@ class CollectorService implements CollectorServiceContract
      */
     private function toDTO(WalletContract $entity): WalletDTO
     {
-        $dto = new WalletDTO();
-        $dto->identity = (string) $entity->id();
-        $dto->type = $entity->type();
-        $dto->amount = $entity->amount();
-        $dto->createdAt = $entity->createdAt()->format('Y-m-d H:i:s');
-
-        return $dto;
+        return Mutator::toDTO($entity);
     }
 
     /**

@@ -21,21 +21,21 @@ Route::group(['prefix' => 'fractional'], function () {
 
         $statementResignedTermID = $service
             ->assignTerm(6, 10)
-            ->change($statementID->identity, 300);
+            ->change($statementID->id, 300);
 
         $statementWithTermID     = $service
             ->assignTerm(12, 10)
             ->collect(500);
 
         $statementResignedID     = $service
-            ->change($statementID->identity, 1000);
+            ->change($statementID->id, 1000);
 
         return response()->json([
-            $statementID->identity,
-            $statementWithTermID->identity,
-            $statementResignedID->identity,
-            $statementResignedTermID->identity,
-            $service->view($statementResignedTermID->identity)
+            $statementID->id,
+            $statementWithTermID->id,
+            $statementResignedID->id,
+            $statementResignedTermID->id,
+            $service->view($statementResignedTermID->id)
         ]);
     });
 });
@@ -51,13 +51,13 @@ Route::group(['prefix' => 'inbound'], function () {
                 ->collect('salary', 3000);
 
             $statementIDChanged      = $service
-                ->change($statementID->identity, 2000);
+                ->change($statementID->id, 2000);
 
             return response()->json([
-                $statementID->identity,
-                $statementIDChanged->identity,
-                $service->view($statementIDChanged->identity),
-                $service->refund($statementID->identity)
+                $statementID->id,
+                $statementIDChanged->id,
+                $service->view($statementIDChanged->id),
+                $service->refund($statementID->id)
             ]);
         });
     });
@@ -73,13 +73,13 @@ Route::group(['prefix' => 'outbound'], function () {
                 ->collect('outwear', 200);
 
             $statementIDChanged      = $service
-                ->change($statementID->identity, 300);
+                ->change($statementID->id, 300);
 
             return response()->json([
-                $statementID->identity,
-                $statementIDChanged->identity,
-                $service->view($statementIDChanged->identity),
-                $service->refund($statementID->identity)
+                $statementID->id,
+                $statementIDChanged->id,
+                $service->view($statementIDChanged->id),
+                $service->refund($statementID->id)
             ]);
         });
     });
