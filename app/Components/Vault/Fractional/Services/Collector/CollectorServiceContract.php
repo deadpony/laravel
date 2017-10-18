@@ -2,20 +2,22 @@
 
 namespace App\Components\Vault\Fractional\Services\Collector;
 
+use App\Components\Vault\Fractional\Agreement\AgreementDTO;
+
 interface CollectorServiceContract
 {
     /**
      * @param float $amount
-     * @return string
+     * @return AgreementDTO
      */
-    public function collect(float $amount): string;
+    public function collect(float $amount): AgreementDTO;
 
     /**
      * @param string $identity
      * @param float $amount
-     * @return string
+     * @return AgreementDTO
      */
-    public function change(string $identity, float $amount): string;
+    public function change(string $identity, float $amount): AgreementDTO;
 
     /**
      * @param string $identity
@@ -25,9 +27,9 @@ interface CollectorServiceContract
 
     /**
      * @param string $identity
-     * @return array
+     * @return AgreementDTO
      */
-    public function view(string $identity): array;
+    public function view(string $identity): AgreementDTO;
 
     /**
      * @param int $months

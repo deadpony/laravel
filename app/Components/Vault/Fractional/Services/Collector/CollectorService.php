@@ -2,9 +2,11 @@
 
 namespace App\Components\Vault\Fractional\Services\Collector;
 
+use App\Components\Vault\Fractional\Agreement\AgreementDTO;
 use App\Components\Vault\Fractional\Agreement\Repositories\AgreementRepositoryContract;
 use App\Components\Vault\Fractional\Agreement\AgreementContract;
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
+use App\Components\Vault\Fractional\Agreement\Term\TermDTO;
 use App\Convention\Generators\Identity\IdentityGenerator;
 use App\Convention\ValueObjects\Identity\Identity;
 
@@ -49,11 +51,39 @@ class CollectorService implements CollectorServiceContract
 
         return $agreement;
     }
+
+    /**
+     * @param AgreementContract $entity
+     * @return AgreementDTO
+     */
+    private function toDTO(AgreementContract $entity): AgreementDTO
+    {
+        $dto = new AgreementDTO();
+        $dto->identity = (string) $entity->id();
+        $dto->amount = $entity->amount();
+        $dto->createdAt = $entity->createdAt()->format('Y-m-d H:i:s');
+
+        if ($entity->term() !== null) {
+            $termDTO = new TermDTO();
+            $termDTO->identity = (string) $entity->term()->id();
+            $termDTO->months = $entity->term()->months();
+            $termDTO->deadlineDay = $entity->term()->deadlineDay();
+            $termDTO->setupFee = $entity->term()->setupFee();
+            $termDTO->monthlyFee = $entity->term()->monthlyFee();
+            $termDTO->createdAt = $entity->term()->createdAt()->format('Y-m-d H:i:s');
+            $termDTO->agreement = $dto;
+
+            $dto->term = $termDTO;
+        }
+
+        return $dto;
+    }
+
     /**
      * @param float $amount
-     * @return string
+     * @return AgreementDTO
      */
-    public function collect(float $amount): string
+    public function collect(float $amount): AgreementDTO
     {
         $agreement = app()->make(AgreementContract::class, [
             'id' => IdentityGenerator::next(),
@@ -62,17 +92,17 @@ class CollectorService implements CollectorServiceContract
 
         $this->trackTermUpdates($agreement);
 
-        $agreement = $this->repository->persist($agreement);
+        $this->repository->persist($agreement);
 
-        return (string) $agreement->id();
+        return $this->toDTO($agreement);
     }
 
     /**
      * @param string $identity
      * @param float $amount
-     * @return string
+     * @return AgreementDTO
      */
-    public function change(string $identity, float $amount): string
+    public function change(string $identity, float $amount): AgreementDTO
     {
         $agreement = $this->repository->byIdentity(new Identity($identity));
 
@@ -82,7 +112,7 @@ class CollectorService implements CollectorServiceContract
 
         $this->repository->persist($agreement);
 
-        return (string) $agreement->id();
+        return $this->toDTO($agreement);
     }
 
     /**
@@ -100,23 +130,13 @@ class CollectorService implements CollectorServiceContract
 
     /**
      * @param string $identity
-     * @return array
+     * @return AgreementDTO
      */
-    public function view(string $identity): array
+    public function view(string $identity): AgreementDTO
     {
         $agreement = $this->repository->byIdentity(new Identity($identity));
 
-        return [
-            'id' => (string) $agreement->id(),
-            'amount' => $agreement->amount(),
-            'opened_at' => $agreement->createdAt()->format('Y-m-d H:i:s'),
-            'term' => [
-                'months' => $agreement->term()->months(),
-                'deadline_date' => $agreement->term()->deadlineDay(),
-                'setup_fee' => $agreement->term()->setupFee(),
-                'monthly_fee' => $agreement->term()->monthlyFee(),
-            ]
-        ];
+        return $this->toDTO($agreement);
     }
 
     /**

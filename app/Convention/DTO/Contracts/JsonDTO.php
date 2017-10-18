@@ -2,15 +2,12 @@
 
 namespace App\Convention\DTO\Contracts;
 
-interface JsonDTO
+interface JsonDTO extends \JsonSerializable
 {
     /**
+     * Get the instance as an array.
+     *
      * @return array
      */
-    public function __toArray(): array;
-
-    /**
-     * @return string
-     */
-    public function __toJson(): string;
+    public function toArray(): array;
 }

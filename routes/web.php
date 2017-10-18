@@ -21,21 +21,21 @@ Route::group(['prefix' => 'fractional'], function () {
 
         $statementResignedTermID = $service
             ->assignTerm(6, 10)
-            ->change($statementID, 300);
+            ->change($statementID->identity, 300);
 
         $statementWithTermID     = $service
             ->assignTerm(12, 10)
             ->collect(500);
 
         $statementResignedID     = $service
-            ->change($statementID, 1000);
+            ->change($statementID->identity, 1000);
 
         return response()->json([
-            $statementID,
-            $statementWithTermID,
-            $statementResignedID,
-            $statementResignedTermID,
-            $service->view($statementResignedTermID)
+            $statementID->identity,
+            $statementWithTermID->identity,
+            $statementResignedID->identity,
+            $statementResignedTermID->identity,
+            $service->view($statementResignedTermID->identity)
         ]);
     });
 });

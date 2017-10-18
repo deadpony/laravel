@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Components\Vault\Inbound\Wallet;
+namespace App\Components\Vault\Fractional\Agreement\Term;
 
+use App\Components\Vault\Fractional\Agreement\AgreementDTO;
 use App\Convention\DTO\Contracts\JsonDTO;
 
-class WalletDTO implements JsonDTO
+class TermDTO implements JsonDTO
 {
     /**
      * @var string
@@ -12,19 +13,34 @@ class WalletDTO implements JsonDTO
     public $identity;
 
     /**
-     * @var string
+     * @var int
      */
-    public $type;
+    public $months;
+
+    /**
+     * @var int
+     */
+    public $deadlineDay;
 
     /**
      * @var float
      */
-    public $amount;
+    public $setupFee;
+
+    /**
+     * @var float
+     */
+    public $monthlyFee;
 
     /**
      * @var string
      */
     public $createdAt;
+
+    /**
+     * @var AgreementDTO
+     */
+    public $agreement;
 
     /**
      * @return string
@@ -49,8 +65,10 @@ class WalletDTO implements JsonDTO
     {
         return [
             'identity' => $this->identity,
-            'type' => $this->type,
-            'amount' => $this->amount,
+            'months' => $this->months,
+            'deadlineDay' => $this->deadlineDay,
+            'setupFee' => $this->setupFee,
+            'monthlyFee' => $this->monthlyFee,
             'createdAt' => $this->createdAt,
         ];
     }

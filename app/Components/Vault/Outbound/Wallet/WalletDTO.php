@@ -35,17 +35,17 @@ class WalletDTO implements JsonDTO
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function __toJson(): string
+    public function jsonSerialize()
     {
-        return json_encode($this->__toArray());
+        return $this->toArray();
     }
 
     /**
      * @return array
      */
-    public function __toArray(): array
+    public function toArray(): array
     {
         return [
             'identity' => $this->identity,
