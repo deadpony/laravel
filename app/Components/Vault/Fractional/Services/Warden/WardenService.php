@@ -4,9 +4,9 @@ namespace App\Components\Vault\Fractional\Services\Warden;
 
 use App\Components\Vault\Fractional\Agreement\AgreementDTO;
 use App\Components\Vault\Fractional\Agreement\Repositories\AgreementRepositoryContract;
-use App\Components\Vault\Outbound\Wallet\WalletDTO;
+use App\Components\Vault\Outbound\Payment\PaymentDTO;
 use App\Components\Vault\Fractional\Agreement\Mutators\DTO\Mutator as AgreementMutator;
-use App\Components\Vault\Outbound\Wallet\Mutators\DTO\Mutator as WalletMutator;
+use App\Components\Vault\Outbound\Payment\Mutators\DTO\Mutator as PaymentMutator;
 
 class WardenService implements WardenServiceContract
 {
@@ -27,13 +27,13 @@ class WardenService implements WardenServiceContract
 
     /**
      * @param AgreementDTO $agreementDTO
-     * @param WalletDTO $paymentDTO
+     * @param PaymentDTO $paymentDTO
      * @return AgreementDTO
      */
-    public function charge(AgreementDTO $agreementDTO, WalletDTO $paymentDTO): AgreementDTO
+    public function charge(AgreementDTO $agreementDTO, PaymentDTO $paymentDTO): AgreementDTO
     {
         $agreement = AgreementMutator::fromDTO($agreementDTO);
-        $agreement->pay(WalletMutator::fromDTO($paymentDTO));
+        $agreement->pay(PaymentMutator::fromDTO($paymentDTO));
 
         $this->repository->persist($agreement);
 
@@ -42,10 +42,10 @@ class WardenService implements WardenServiceContract
 
     /**
      * @param AgreementDTO $agreementDTO
-     * @param WalletDTO $paymentDTO
+     * @param PaymentDTO $paymentDTO
      * @return AgreementDTO
      */
-    public function refund(AgreementDTO $agreementDTO, WalletDTO $paymentDTO): AgreementDTO
+    public function refund(AgreementDTO $agreementDTO, PaymentDTO $paymentDTO): AgreementDTO
     {
         // TODO: Implement refund() method.
     }

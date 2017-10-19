@@ -4,10 +4,10 @@ namespace App\Components\Vault\Inbound\Providers;
 
 use App\Components\Vault\Inbound\Services\Collector\CollectorService;
 use App\Components\Vault\Inbound\Services\Collector\CollectorServiceContract;
-use App\Components\Vault\Inbound\Wallet\Repositories\WalletRepositoryContract;
-use App\Components\Vault\Inbound\Wallet\Repositories\WalletRepositoryDoctrine;
-use App\Components\Vault\Inbound\Wallet\WalletContract;
-use App\Components\Vault\Inbound\Wallet\WalletEntity;
+use App\Components\Vault\Inbound\Payment\Repositories\PaymentRepositoryContract;
+use App\Components\Vault\Inbound\Payment\Repositories\PaymentRepositoryDoctrine;
+use App\Components\Vault\Inbound\Payment\PaymentContract;
+use App\Components\Vault\Inbound\Payment\PaymentEntity;
 use Illuminate\Support\ServiceProvider;
 
 class InboundServiceProvider extends ServiceProvider
@@ -29,12 +29,12 @@ class InboundServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            WalletContract::class,
-            WalletEntity::class);
+            PaymentContract::class,
+            PaymentEntity::class);
 
         $this->app->bind(
-            WalletRepositoryContract::class,
-            WalletRepositoryDoctrine::class);
+            PaymentRepositoryContract::class,
+            PaymentRepositoryDoctrine::class);
 
         $this->app->bind(
             CollectorServiceContract::class,

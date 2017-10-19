@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Components\Vault\Inbound\Wallet;
+namespace App\Components\Vault\Outbound\Payment;
 
 use App\Convention\DTO\Objects\Contracts\JsonDTO;
 
-class WalletDTO implements JsonDTO
+class PaymentDTO implements JsonDTO
 {
     /**
      * @var string

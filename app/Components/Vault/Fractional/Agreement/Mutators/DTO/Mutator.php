@@ -6,8 +6,8 @@ use App\Components\Vault\Fractional\Agreement\AgreementContract;
 use App\Components\Vault\Fractional\Agreement\AgreementDTO;
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
 use App\Components\Vault\Fractional\Agreement\Term\TermDTO;
-use App\Components\Vault\Outbound\Wallet\WalletContract;
-use App\Components\Vault\Outbound\Wallet\WalletDTO;
+use App\Components\Vault\Outbound\Payment\PaymentContract;
+use App\Components\Vault\Outbound\Payment\PaymentDTO;
 use App\Convention\ValueObjects\Identity\Identity;
 use Illuminate\Support\Collection;
 
@@ -39,8 +39,8 @@ class Mutator
         }
 
         if ($payments->isNotEmpty()) {
-            $payments->each(function(WalletDTO $paymentDTO) use ($agreement) {
-                $agreement->pay(\App\Components\Vault\Outbound\Wallet\Mutators\DTO\Mutator::fromDTO($paymentDTO));
+            $payments->each(function(PaymentDTO $paymentDTO) use ($agreement) {
+                $agreement->pay(\App\Components\Vault\Outbound\Payment\Mutators\DTO\Mutator::fromDTO($paymentDTO));
             });
         }
 
@@ -73,8 +73,8 @@ class Mutator
         }
 
         if ($entity->payments()) {
-            collect($entity->payments())->each(function(WalletContract $payment) use ($dto) {
-                $dto->payments[] = \App\Components\Vault\Outbound\Wallet\Mutators\DTO\Mutator::toDTO($payment);
+            collect($entity->payments())->each(function(PaymentContract $payment) use ($dto) {
+                $dto->payments[] = \App\Components\Vault\Outbound\Payment\Mutators\DTO\Mutator::toDTO($payment);
             });
         }
 

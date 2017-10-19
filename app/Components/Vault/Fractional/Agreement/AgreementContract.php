@@ -3,7 +3,7 @@
 namespace App\Components\Vault\Fractional\Agreement;
 
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
-use App\Components\Vault\Outbound\Wallet\WalletContract;
+use App\Components\Vault\Outbound\Payment\PaymentContract;
 use App\Convention\ValueObjects\Identity\Identity;
 
 interface AgreementContract
@@ -40,16 +40,16 @@ interface AgreementContract
     public function payments(): array;
 
     /**
-     * @param WalletContract $payment
+     * @param PaymentContract $payment
      * @return bool
      */
-    public function pay(WalletContract $payment): bool;
+    public function pay(PaymentContract $payment): bool;
 
     /**
-     * @param WalletContract $payment
+     * @param PaymentContract $payment
      * @return bool
      */
-    public function refund(WalletContract $payment): bool;
+    public function refund(PaymentContract $payment): bool;
 
     /**
      * @param float $amount

@@ -3,23 +3,23 @@
 namespace App\Components\Vault\Fractional\Services\Warden;
 
 use App\Components\Vault\Fractional\Agreement\AgreementDTO;
-use App\Components\Vault\Outbound\Wallet\WalletDTO;
+use App\Components\Vault\Outbound\Payment\PaymentDTO;
 
 interface WardenServiceContract
 {
     /**
      * @param AgreementDTO $agreementDTO
-     * @param WalletDTO $paymentDTO
+     * @param PaymentDTO $paymentDTO
      * @return AgreementDTO
      */
-    public function charge(AgreementDTO $agreementDTO, WalletDTO $paymentDTO): AgreementDTO;
+    public function charge(AgreementDTO $agreementDTO, PaymentDTO $paymentDTO): AgreementDTO;
 
     /**
      * @param AgreementDTO $agreementDTO
-     * @param WalletDTO $paymentDTO
+     * @param PaymentDTO $paymentDTO
      * @return AgreementDTO
      */
-    public function refund(AgreementDTO $agreementDTO, WalletDTO $paymentDTO): AgreementDTO;
+    public function refund(AgreementDTO $agreementDTO, PaymentDTO $paymentDTO): AgreementDTO;
 
     /**
      * @param AgreementDTO $agreementDTO

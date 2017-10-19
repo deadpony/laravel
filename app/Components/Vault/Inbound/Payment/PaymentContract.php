@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Components\Vault\Inbound\Wallet;
+namespace App\Components\Vault\Inbound\Payment;
 
 use App\Convention\ValueObjects\Identity\Identity;
 
-interface WalletContract
+interface PaymentContract
 {
     /**
      * @return Identity
@@ -28,7 +28,7 @@ interface WalletContract
 
     /**
      * @param float $amount
-     * @return WalletContract
+     * @return PaymentContract
      */
-    public function updateAmount(float $amount): WalletContract;
+    public function updateAmount(float $amount): PaymentContract;
 }

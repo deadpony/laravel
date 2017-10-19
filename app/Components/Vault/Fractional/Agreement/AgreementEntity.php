@@ -3,7 +3,7 @@
 namespace App\Components\Vault\Fractional\Agreement;
 
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
-use App\Components\Vault\Outbound\Wallet\WalletContract;
+use App\Components\Vault\Outbound\Payment\PaymentContract;
 use App\Convention\ValueObjects\Identity\Identity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -42,10 +42,10 @@ class AgreementEntity implements AgreementContract
 
     /**
      * @var ArrayCollection;
-     * @ORM\ManyToMany(targetEntity="App\Components\Vault\Outbound\Wallet\WalletEntity", orphanRemoval=true, cascade={"persist", "remove", "merge"})
-     * @ORM\JoinTable(name="fractional_agreements_outbound_wallet",
+     * @ORM\ManyToMany(targetEntity="App\Components\Vault\Outbound\Payment\PaymentEntity", orphanRemoval=true, cascade={"persist", "remove", "merge"})
+     * @ORM\JoinTable(name="fractional_agreements_outbound_payments",
      *      joinColumns={@ORM\JoinColumn(name="fractional_agreement_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="outbound_wallet_id", referencedColumnName="id", unique=true)})
+     *      inverseJoinColumns={@ORM\JoinColumn(name="outbound_payment_id", referencedColumnName="id", unique=true)})
      */
     private $payments;
 
@@ -138,10 +138,10 @@ class AgreementEntity implements AgreementContract
     }
 
     /**
-     * @param WalletContract $payment
+     * @param PaymentContract $payment
      * @return bool
      */
-    public function pay(WalletContract $payment): bool
+    public function pay(PaymentContract $payment): bool
     {
         if (!$this->payments->contains($payment))
             $this->payments->add($payment);
@@ -150,10 +150,10 @@ class AgreementEntity implements AgreementContract
     }
 
     /**
-     * @param WalletContract $payment
+     * @param PaymentContract $payment
      * @return bool
      */
-    public function refund(WalletContract $payment): bool
+    public function refund(PaymentContract $payment): bool
     {
         $this->payments->removeElement($payment);
 

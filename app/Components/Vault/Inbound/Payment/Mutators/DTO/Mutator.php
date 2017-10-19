@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Components\Vault\Inbound\Wallet\Mutators\DTO;
+namespace App\Components\Vault\Inbound\Payment\Mutators\DTO;
 
-use App\Components\Vault\Inbound\Wallet\WalletContract;
-use App\Components\Vault\Inbound\Wallet\WalletDTO;
+use App\Components\Vault\Inbound\Payment\PaymentContract;
+use App\Components\Vault\Inbound\Payment\PaymentDTO;
 use App\Convention\ValueObjects\Identity\Identity;
 use Illuminate\Support\Collection;
 
@@ -18,21 +18,21 @@ class Mutator
     }
 
     /**
-     * @param WalletDTO $dto
-     * @return WalletContract
+     * @param PaymentDTO $dto
+     * @return PaymentContract
      */
-    public static function fromDTO(WalletDTO $dto): WalletContract
+    public static function fromDTO(PaymentDTO $dto): PaymentContract
     {
-        return app()->make(WalletContract::class, self::generateIdentity(collect($dto->toArray()))->toArray());
+        return app()->make(PaymentContract::class, self::generateIdentity(collect($dto->toArray()))->toArray());
     }
 
     /**
-     * @param WalletContract $entity
-     * @return WalletDTO
+     * @param PaymentContract $entity
+     * @return PaymentDTO
      */
-    public static function toDTO(WalletContract $entity): WalletDTO
+    public static function toDTO(PaymentContract $entity): PaymentDTO
     {
-        $dto = new WalletDTO();
+        $dto = new PaymentDTO();
         $dto->id = (string) $entity->id();
         $dto->type = $entity->type();
         $dto->amount = $entity->amount();

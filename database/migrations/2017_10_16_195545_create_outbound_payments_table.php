@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInboundWalletTable extends Migration
+class CreateOutboundPaymentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateInboundWalletTable extends Migration
      */
     public function up()
     {
-        Schema::create('inbound_wallet', function (Blueprint $table) {
+        Schema::create('outbound_payments', function (Blueprint $table) {
             $table->string('id', 36)->unique();
             $table->string('type', 64);
             $table->float('amount', 8,2);
@@ -28,6 +28,6 @@ class CreateInboundWalletTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inbound_wallet');
+        Schema::dropIfExists('outbound_payments');
     }
 }

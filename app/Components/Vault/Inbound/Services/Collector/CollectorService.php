@@ -2,33 +2,33 @@
 
 namespace App\Components\Vault\Inbound\Services\Collector;
 
-use App\Components\Vault\Inbound\Wallet\Mutators\DTO\Mutator;
-use App\Components\Vault\Inbound\Wallet\Repositories\WalletRepositoryContract;
-use App\Components\Vault\Inbound\Wallet\WalletContract;
-use App\Components\Vault\Inbound\Wallet\WalletDTO;
+use App\Components\Vault\Inbound\Payment\Mutators\DTO\Mutator;
+use App\Components\Vault\Inbound\Payment\Repositories\PaymentRepositoryContract;
+use App\Components\Vault\Inbound\Payment\PaymentContract;
+use App\Components\Vault\Inbound\Payment\PaymentDTO;
 use App\Convention\Generators\Identity\IdentityGenerator;
 use App\Convention\ValueObjects\Identity\Identity;
 
 class CollectorService implements CollectorServiceContract
 {
     /**
-     * @var WalletRepositoryContract
+     * @var PaymentRepositoryContract
      */
     private $repository;
 
     /**
-     * @param WalletRepositoryContract $repository
+     * @param PaymentRepositoryContract $repository
      */
-    public function __construct(WalletRepositoryContract $repository)
+    public function __construct(PaymentRepositoryContract $repository)
     {
         $this->repository = $repository;
     }
 
     /**
-     * @param WalletContract $entity
-     * @return WalletDTO
+     * @param PaymentContract $entity
+     * @return PaymentDTO
      */
-    private function toDTO(WalletContract $entity): WalletDTO
+    private function toDTO(PaymentContract $entity): PaymentDTO
     {
         return Mutator::toDTO($entity);
     }
@@ -36,31 +36,31 @@ class CollectorService implements CollectorServiceContract
     /**
      * @param string $type
      * @param float $amount
-     * @return WalletDTO
+     * @return PaymentDTO
      */
-    public function collect(string $type, float $amount): WalletDTO
+    public function collect(string $type, float $amount): PaymentDTO
     {
-        $wallet = app()->make(WalletContract::class,
+        $payment = app()->make(PaymentContract::class,
             ['id' => IdentityGenerator::next(), 'type' => $type, 'amount' => $amount]);
 
-        $this->repository->persist($wallet);
+        $this->repository->persist($payment);
 
-        return $this->toDTO($wallet);
+        return $this->toDTO($payment);
     }
 
     /**
      * @param string $identity
      * @param float $amount
-     * @return WalletDTO
+     * @return PaymentDTO
      */
-    public function change(string $identity, float $amount): WalletDTO
+    public function change(string $identity, float $amount): PaymentDTO
     {
-        $wallet = $this->repository->byIdentity(new Identity($identity));
-        $wallet->updateAmount($amount);
+        $payment = $this->repository->byIdentity(new Identity($identity));
+        $payment->updateAmount($amount);
 
-        $this->repository->persist($wallet);
+        $this->repository->persist($payment);
 
-        return $this->toDTO($wallet);
+        return $this->toDTO($payment);
     }
 
     /**
@@ -69,20 +69,20 @@ class CollectorService implements CollectorServiceContract
      */
     public function refund(string $identity): bool
     {
-        $wallet = $this->repository->byIdentity(new Identity($identity));
+        $payment = $this->repository->byIdentity(new Identity($identity));
 
-        return $this->repository->destroy($wallet);
+        return $this->repository->destroy($payment);
     }
 
     /**
      * @param string $identity
-     * @return WalletDTO
+     * @return PaymentDTO
      */
-    public function view(string $identity): WalletDTO
+    public function view(string $identity): PaymentDTO
     {
-        $wallet = $this->repository->byIdentity(new Identity($identity));
+        $payment = $this->repository->byIdentity(new Identity($identity));
 
-        return $this->toDTO($wallet);
+        return $this->toDTO($payment);
     }
 
 }

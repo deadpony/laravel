@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\Vault\Inbound\Wallet;
+namespace App\Components\Vault\Outbound\Payment;
 
 use App\Convention\ValueObjects\Identity\Identity;
 
@@ -8,9 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="inbound_wallet")
+ * @ORM\Table(name="outbound_payments")
  */
-class WalletEntity implements WalletContract
+class PaymentEntity implements PaymentContract
 {
     /**
      * @var Identity
@@ -53,9 +53,9 @@ class WalletEntity implements WalletContract
 
     /**
      * @param string $type
-     * @return WalletEntity
+     * @return PaymentEntity
      */
-    private function setType(string $type): WalletEntity
+    private function setType(string $type): PaymentEntity
     {
         $this->type = $type;
 
@@ -64,10 +64,10 @@ class WalletEntity implements WalletContract
 
     /**
      * @param float $amount
-     * @return WalletEntity
+     * @return PaymentEntity
      * @throws \InvalidArgumentException
      */
-    private function setAmount(float $amount): WalletEntity
+    private function setAmount(float $amount): PaymentEntity
     {
         if ($amount > 0 === false) {
             throw new \InvalidArgumentException("Amount can't be a zero value");
@@ -112,9 +112,9 @@ class WalletEntity implements WalletContract
 
     /**
      * @param float $amount
-     * @return WalletContract
+     * @return PaymentContract
      */
-    public function updateAmount(float $amount): WalletContract
+    public function updateAmount(float $amount): PaymentContract
     {
         $this->setAmount($amount);
 

@@ -2,23 +2,23 @@
 
 namespace App\Components\Vault\Outbound\Services\Collector;
 
-use App\Components\Vault\Outbound\Wallet\WalletDTO;
+use App\Components\Vault\Outbound\Payment\PaymentDTO;
 
 interface CollectorServiceContract
 {
     /**
      * @param string $type
      * @param float $amount
-     * @return WalletDTO
+     * @return PaymentDTO
      */
-    public function collect(string $type, float $amount): WalletDTO;
+    public function collect(string $type, float $amount): PaymentDTO;
 
     /**
      * @param string $identity
      * @param float $amount
-     * @return WalletDTO
+     * @return PaymentDTO
      */
-    public function change(string $identity, float $amount): WalletDTO;
+    public function change(string $identity, float $amount): PaymentDTO;
 
     /**
      * @param string $identity
@@ -28,7 +28,7 @@ interface CollectorServiceContract
 
     /**
      * @param string $identity
-     * @return WalletDTO
+     * @return PaymentDTO
      */
-    public function view(string $identity): WalletDTO;
+    public function view(string $identity): PaymentDTO;
 }
