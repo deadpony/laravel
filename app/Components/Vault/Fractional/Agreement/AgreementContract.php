@@ -3,6 +3,7 @@
 namespace App\Components\Vault\Fractional\Agreement;
 
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
+use App\Components\Vault\Outbound\Wallet\WalletContract;
 use App\Convention\ValueObjects\Identity\Identity;
 
 interface AgreementContract
@@ -34,8 +35,40 @@ interface AgreementContract
     public function assignTerm(TermContract $term): AgreementContract;
 
     /**
+     * @return array
+     */
+    public function payments(): array;
+
+    /**
+     * @param WalletContract $payment
+     * @return bool
+     */
+    public function pay(WalletContract $payment): bool;
+
+    /**
+     * @param WalletContract $payment
+     * @return bool
+     */
+    public function refund(WalletContract $payment): bool;
+
+    /**
      * @param float $amount
      * @return AgreementContract
      */
     public function updateAmount(float $amount): AgreementContract;
+
+    /**
+     * @return bool
+     */
+    public function isDeadlineReached(): bool;
+
+    /**
+     * @return bool
+     */
+    public function isDeadlinePassed(): bool;
+
+    /**
+     * @return bool
+     */
+    public function isAgreementPassed(): bool;
 }

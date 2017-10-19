@@ -10,6 +10,8 @@ use App\Components\Vault\Fractional\Agreement\AgreementContract;
 use App\Components\Vault\Fractional\Agreement\AgreementEntity;
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
 use App\Components\Vault\Fractional\Agreement\Term\TermEntity;
+use App\Components\Vault\Fractional\Services\Warden\WardenService;
+use App\Components\Vault\Fractional\Services\Warden\WardenServiceContract;
 use Illuminate\Support\ServiceProvider;
 
 class FractionalServiceProvider extends ServiceProvider
@@ -44,5 +46,9 @@ class FractionalServiceProvider extends ServiceProvider
         $this->app->bind(
             CollectorServiceContract::class,
             CollectorService::class);
+
+        $this->app->bind(
+            WardenServiceContract::class,
+            WardenService::class);
     }
 }

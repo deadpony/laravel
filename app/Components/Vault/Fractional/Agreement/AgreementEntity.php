@@ -3,8 +3,10 @@
 namespace App\Components\Vault\Fractional\Agreement;
 
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
+use App\Components\Vault\Outbound\Wallet\WalletContract;
 use App\Convention\ValueObjects\Identity\Identity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -39,6 +41,15 @@ class AgreementEntity implements AgreementContract
     private $term;
 
     /**
+     * @var ArrayCollection;
+     * @ORM\ManyToMany(targetEntity="App\Components\Vault\Outbound\Wallet\WalletEntity", orphanRemoval=true, cascade={"persist", "remove", "merge"})
+     * @ORM\JoinTable(name="fractional_agreements_outbound_wallet",
+     *      joinColumns={@ORM\JoinColumn(name="fractional_agreement_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="outbound_wallet_id", referencedColumnName="id", unique=true)})
+     */
+    private $payments;
+
+    /**
      * @param Identity $id
      * @param float $amount
      * @param TermContract|null $term
@@ -49,6 +60,8 @@ class AgreementEntity implements AgreementContract
         $this->setAmount($amount);
 
         $this->term = $term;
+
+        $this->payments = new \Doctrine\Common\Collections\ArrayCollection();
 
         $this->createdAt = new \DateTimeImmutable();
     }
@@ -117,6 +130,38 @@ class AgreementEntity implements AgreementContract
     }
 
     /**
+     * @return array
+     */
+    public function payments(): array
+    {
+        return $this->payments->toArray();
+    }
+
+    /**
+     * @param WalletContract $payment
+     * @return bool
+     */
+    public function pay(WalletContract $payment): bool
+    {
+        if (!$this->payments->contains($payment))
+            $this->payments->add($payment);
+
+        return true;
+    }
+
+    /**
+     * @param WalletContract $payment
+     * @return bool
+     */
+    public function refund(WalletContract $payment): bool
+    {
+        $this->payments->removeElement($payment);
+
+        return true;
+    }
+
+
+    /**
      * @param float $amount
      * @return AgreementContract
      */
@@ -126,4 +171,30 @@ class AgreementEntity implements AgreementContract
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isDeadlineReached(): bool
+    {
+        // TODO: Implement isDeadlineReached() method.
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeadlinePassed(): bool
+    {
+        // TODO: Implement isDeadlinePassed() method.
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAgreementPassed(): bool
+    {
+        // TODO: Implement isAgreementPassed() method.
+    }
+
+
 }

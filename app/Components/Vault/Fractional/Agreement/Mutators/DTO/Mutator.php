@@ -32,7 +32,8 @@ class Mutator
         $params = self::generateIdentity(collect($params->get('term', [])));
 
         if ($params->isNotEmpty()) {
-            $agreement->assignTerm(app()->make(TermContract::class, $params->get('term')));
+            $params->put('agreement', $agreement);
+            app()->make(TermContract::class, $params->toArray());
         }
 
         return $agreement;

@@ -12,31 +12,45 @@
 */
 
 Route::group(['prefix' => 'fractional'], function () {
-    Route::get('test', function () {
+    Route::group(['prefix' => 'collect'], function () {
+        Route::get('test', function () {
+            $service = app()->make(\App\Components\Vault\Fractional\Services\Collector\CollectorServiceContract::class);
 
-        $service = app()->make(\App\Components\Vault\Fractional\Services\Collector\CollectorServiceContract::class);
+            $statementID             = $service
+                ->collect(300);
 
-        $statementID             = $service
-            ->collect(300);
+            $statementResignedTermID = $service
+                ->assignTerm(6, 10)
+                ->change($statementID->id, 300);
 
-        $statementResignedTermID = $service
-            ->assignTerm(6, 10)
-            ->change($statementID->id, 300);
+            $statementWithTermID     = $service
+                ->assignTerm(12, 10)
+                ->collect(500);
 
-        $statementWithTermID     = $service
-            ->assignTerm(12, 10)
-            ->collect(500);
+            $statementResignedID     = $service
+                ->change($statementID->id, 1000);
 
-        $statementResignedID     = $service
-            ->change($statementID->id, 1000);
+            return response()->json([
+                $statementID->id,
+                $statementWithTermID->id,
+                $statementResignedID->id,
+                $statementResignedTermID->id,
+                $service->view($statementResignedTermID->id)
+            ]);
+        });
+    });
 
-        return response()->json([
-            $statementID->id,
-            $statementWithTermID->id,
-            $statementResignedID->id,
-            $statementResignedTermID->id,
-            $service->view($statementResignedTermID->id)
-        ]);
+    Route::group(['prefix' => 'pay'], function () {
+        Route::get('test', function () {
+            $serviceCollector = app()->make(\App\Components\Vault\Fractional\Services\Collector\CollectorServiceContract::class);
+            $agreement        = $serviceCollector->assignTerm(12, 10)->collect(500);
+
+            $serviceWallet = app()->make(\App\Components\Vault\Outbound\Services\Collector\CollectorService::class);
+            $payment       = $serviceWallet->collect('outwear', 200);
+
+            $serviceWarden = app()->make(\App\Components\Vault\Fractional\Services\Warden\WardenServiceContract::class);
+            $serviceWarden->charge($agreement, $payment);
+        });
     });
 });
 

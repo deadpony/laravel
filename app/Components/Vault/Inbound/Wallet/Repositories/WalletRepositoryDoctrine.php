@@ -92,7 +92,7 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
      */
     public function persist(WalletContract $wallet): WalletContract
     {
-        $this->manager->persist($wallet);
+        $this->manager->persist($this->manager->merge($wallet));
         $this->manager->flush();
         $this->manager->clear();
 
@@ -106,7 +106,7 @@ class WalletRepositoryDoctrine implements WalletRepositoryContract
      */
     public function destroy(WalletContract $wallet): bool
     {
-        $this->manager->remove($wallet);
+        $this->manager->remove($this->manager->merge($wallet));
         $this->manager->flush();
         $this->manager->clear();
 

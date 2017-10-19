@@ -90,7 +90,7 @@ class AgreementRepositoryDoctrine implements AgreementRepositoryContract
      */
     public function persist(AgreementContract $agreement): AgreementContract
     {
-        $this->manager->persist($agreement);
+        $this->manager->persist($this->manager->merge($agreement));
         $this->manager->flush();
         $this->manager->clear();
 
@@ -104,7 +104,7 @@ class AgreementRepositoryDoctrine implements AgreementRepositoryContract
      */
     public function destroy(AgreementContract $agreement): bool
     {
-        $this->manager->remove($agreement);
+        $this->manager->remove($this->manager->merge($agreement));
         $this->manager->flush();
         $this->manager->clear();
 
