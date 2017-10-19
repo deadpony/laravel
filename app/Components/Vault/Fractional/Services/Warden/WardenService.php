@@ -61,7 +61,9 @@ class WardenService implements WardenServiceContract
      */
     public function isDeadlineReached(AgreementDTO $agreementDTO): bool
     {
-        // TODO: Implement isDeadlineReached() method.
+        $agreement = AgreementMutator::fromDTO($agreementDTO);
+
+        return $agreement->isDeadlineReached();
     }
 
     /**
@@ -70,7 +72,9 @@ class WardenService implements WardenServiceContract
      */
     public function isDeadlinePassed(AgreementDTO $agreementDTO): bool
     {
-        // TODO: Implement isDeadlinePassed() method.
+        $agreement = AgreementMutator::fromDTO($agreementDTO);
+
+        return $agreement->isDeadlinePassed();
     }
 
     /**
@@ -79,7 +83,9 @@ class WardenService implements WardenServiceContract
      */
     public function isAgreementPassed(AgreementDTO $agreementDTO): bool
     {
-        // TODO: Implement isAgreementPassed() method.
+        $agreement = AgreementMutator::fromDTO($agreementDTO);
+
+        return $agreement->isAgreementPassed();
     }
 
 }
