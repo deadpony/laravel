@@ -49,7 +49,9 @@ Route::group(['prefix' => 'fractional'], function () {
             $payment       = $serviceWallet->collect('outwear', 200);
 
             $serviceWarden = app()->make(\App\Components\Vault\Fractional\Services\Warden\WardenServiceContract::class);
-            $serviceWarden->charge($agreement, $payment);
+            $agreement     = $serviceWarden->charge($agreement, $payment);
+
+            return response()->json($agreement->toArray());
         });
     });
 });

@@ -6,6 +6,8 @@ use App\Components\Vault\Fractional\Agreement\AgreementContract;
 use App\Components\Vault\Fractional\Agreement\AgreementDTO;
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
 use App\Components\Vault\Fractional\Agreement\Term\TermDTO;
+use App\Components\Vault\Outbound\Wallet\WalletContract;
+use App\Components\Vault\Outbound\Wallet\WalletDTO;
 use App\Convention\ValueObjects\Identity\Identity;
 use Illuminate\Support\Collection;
 
@@ -25,15 +27,21 @@ class Mutator
      */
     public static function fromDTO(AgreementDTO $dto): AgreementContract
     {
-        $params = self::generateIdentity(collect($dto->toArray()));
+        $aggRoot  = self::generateIdentity(collect($dto->toArray()));
+        $term     = self::generateIdentity(collect($aggRoot->pull('term', [])));
+        $payments = self::generateIdentity(collect($aggRoot->pull('payments', [])));
 
-        $agreement = app()->make(AgreementContract::class, $params->except('term')->toArray());
+        $agreement = app()->make(AgreementContract::class, $aggRoot->toArray());
 
-        $params = self::generateIdentity(collect($params->get('term', [])));
+        if ($term->isNotEmpty()) {
+            $term->put('agreement', $agreement);
+            app()->make(TermContract::class, $term->toArray());
+        }
 
-        if ($params->isNotEmpty()) {
-            $params->put('agreement', $agreement);
-            app()->make(TermContract::class, $params->toArray());
+        if ($payments->isNotEmpty()) {
+            $payments->each(function(WalletDTO $paymentDTO) use ($agreement) {
+                $agreement->pay(\App\Components\Vault\Outbound\Wallet\Mutators\DTO\Mutator::fromDTO($paymentDTO));
+            });
         }
 
         return $agreement;
@@ -62,6 +70,12 @@ class Mutator
             $termDTO->agreement = $dto;
 
             $dto->term = $termDTO;
+        }
+
+        if ($entity->payments()) {
+            collect($entity->payments())->each(function(WalletContract $payment) use ($dto) {
+                $dto->payments[] = \App\Components\Vault\Outbound\Wallet\Mutators\DTO\Mutator::toDTO($payment);
+            });
         }
 
         return $dto;

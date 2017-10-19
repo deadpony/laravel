@@ -28,6 +28,11 @@ class AgreementDTO implements JsonDTO
     public $term;
 
     /**
+     * @var array
+     */
+    public $payments;
+
+    /**
      * @return string
      */
     public function __toString()
@@ -53,6 +58,7 @@ class AgreementDTO implements JsonDTO
             'amount' => $this->amount,
             'createdAt' => $this->createdAt,
             'term' => $this->term->toArray(),
+            'payments' => $this->payments,
         ];
     }
 }
