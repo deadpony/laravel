@@ -30,7 +30,7 @@ class AgreementDTO implements JsonDTO
     /**
      * @var array
      */
-    public $payments;
+    public $payments = [];
 
     /**
      * @return string

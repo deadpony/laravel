@@ -143,8 +143,13 @@ class AgreementEntity implements AgreementContract
      */
     public function pay(PaymentContract $payment): bool
     {
-        if (!$this->payments->contains($payment))
+        $key = collect($this->payments->toArray())->search(function(PaymentContract $paidPayment) use ($payment) {
+            return $paidPayment->id()->equals($payment->id());
+        });
+
+        if ($key === false) {
             $this->payments->add($payment);
+        }
 
         return true;
     }
@@ -155,7 +160,13 @@ class AgreementEntity implements AgreementContract
      */
     public function refund(PaymentContract $payment): bool
     {
-        $this->payments->removeElement($payment);
+        $key = collect($this->payments->toArray())->search(function(PaymentContract $paidPayment) use ($payment) {
+            return $paidPayment->id()->equals($payment->id());
+        });
+
+        if ($key !== false) {
+            $this->payments->remove($key);
+        }
 
         return true;
     }

@@ -47,7 +47,12 @@ class WardenService implements WardenServiceContract
      */
     public function refund(AgreementDTO $agreementDTO, PaymentDTO $paymentDTO): AgreementDTO
     {
-        // TODO: Implement refund() method.
+        $agreement = AgreementMutator::fromDTO($agreementDTO);
+        $agreement->refund(PaymentMutator::fromDTO($paymentDTO));
+
+        $this->repository->persist($agreement);
+
+        return AgreementMutator::toDTO($agreement);
     }
 
     /**

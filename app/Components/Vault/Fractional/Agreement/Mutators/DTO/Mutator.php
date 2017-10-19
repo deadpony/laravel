@@ -29,7 +29,7 @@ class Mutator
     {
         $aggRoot  = self::generateIdentity(collect($dto->toArray()));
         $term     = self::generateIdentity(collect($aggRoot->pull('term', [])));
-        $payments = self::generateIdentity(collect($aggRoot->pull('payments', [])));
+        $payments = collect($aggRoot->pull('payments', []));
 
         $agreement = app()->make(AgreementContract::class, $aggRoot->toArray());
 

@@ -54,8 +54,22 @@ Route::group(['prefix' => 'fractional'], function () {
             return response()->json($agreement->toArray());
         });
     });
-});
 
+    Route::group(['prefix' => 'refund'], function () {
+        Route::get('test', function () {
+            $serviceCollector = app()->make(\App\Components\Vault\Fractional\Services\Collector\CollectorServiceContract::class);
+            $agreement        = $serviceCollector->view('880a0949-65a0-4ce0-9de3-69d65492f6e3');
+
+            $serviceWallet = app()->make(\App\Components\Vault\Outbound\Services\Collector\CollectorService::class);
+            $payment       = $serviceWallet->view('4bb3e315-cce1-431c-90bc-8f9627c75a1a');
+
+            $serviceWarden = app()->make(\App\Components\Vault\Fractional\Services\Warden\WardenServiceContract::class);
+            $agreement     = $serviceWarden->refund($agreement, $payment);
+
+            return response()->json($agreement->toArray());
+        });
+    });
+});
 
 Route::group(['prefix' => 'inbound'], function () {
     Route::group(['prefix' => 'wallet'], function () {
