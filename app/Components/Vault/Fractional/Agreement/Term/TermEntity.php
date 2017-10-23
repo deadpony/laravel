@@ -71,13 +71,13 @@ class TermEntity implements TermContract
     {
         $this->id = $id;
 
+        $this->createdAt = new \DateTimeImmutable();
+
         $this->setMonths($months);
         $this->setDeadlineDay($deadlineDay);
 
         $this->setupFee = $setupFee;
         $this->monthlyFee = $monthlyFee;
-
-        $this->createdAt = new \DateTimeImmutable();
 
         $this->agreement = $agreement;
 
@@ -112,6 +112,10 @@ class TermEntity implements TermContract
 
         if ($day > 31 === true) {
             throw new \InvalidArgumentException("Deadline date can't be greater than 31 day of month");
+        }
+
+        if ((int) $this->createdAt()->format('j') > $day) {
+            throw new \InvalidArgumentException("Deadline date can't be in past. Agreement date is {$this->createdAt()->format('d M')}");
         }
 
         $this->deadlineDay = $day;
