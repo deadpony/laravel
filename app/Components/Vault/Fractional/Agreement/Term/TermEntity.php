@@ -3,6 +3,7 @@
 namespace App\Components\Vault\Fractional\Agreement\Term;
 
 use App\Components\Vault\Fractional\Agreement\AgreementContract;
+use App\Components\Vault\Fractional\Agreement\Calendar\CalendarVO;
 use App\Convention\ValueObjects\Identity\Identity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -219,4 +220,26 @@ class TermEntity implements TermContract
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function paymentCalendar(): array
+    {
+        return collect(range(1, $this->months()))
+            ->map(function(int $monthNumber) {
+
+                $monthNumber--;
+
+                $monthDeadlineDate = (new \DateTime($this->createdAt()->format('Y-m-d')))
+                    ->modify("first day of this month")
+                    ->modify("+ {$monthNumber} month")
+                    ->modify("+ {$this->deadlineDay()} day")
+                    ->modify("- 1 day");
+
+                $monthNumber++;
+
+                return new CalendarVO($monthNumber, $monthDeadlineDate);
+            })
+            ->toArray();
+    }
 }

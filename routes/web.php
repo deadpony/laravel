@@ -43,7 +43,7 @@ Route::group(['prefix' => 'fractional'], function () {
     Route::group(['prefix' => 'pay'], function () {
         Route::get('test', function () {
             $serviceCollector = app()->make(\App\Components\Vault\Fractional\Services\Collector\CollectorServiceContract::class);
-            $agreement        = $serviceCollector->assignTerm(12, 10)->collect(500);
+            $agreement        = $serviceCollector->assignTerm(12, (int) (new \DateTime())->format('j'))->collect(500);
 
             $serviceWallet = app()->make(\App\Components\Vault\Outbound\Services\Collector\CollectorService::class);
             $payment       = $serviceWallet->collect('outwear', 200);
@@ -65,6 +65,14 @@ Route::group(['prefix' => 'fractional'], function () {
 
             $serviceWarden = app()->make(\App\Components\Vault\Fractional\Services\Warden\WardenServiceContract::class);
             $agreement     = $serviceWarden->refund($agreement, $payment);
+
+            return response()->json($agreement->toArray());
+        });
+    });
+    Route::group(['prefix' => 'view'], function () {
+        Route::get('test/{id}', function ($id) {
+            $serviceCollector = app()->make(\App\Components\Vault\Fractional\Services\Collector\CollectorServiceContract::class);
+            $agreement        = $serviceCollector->view($id);
 
             return response()->json($agreement->toArray());
         });

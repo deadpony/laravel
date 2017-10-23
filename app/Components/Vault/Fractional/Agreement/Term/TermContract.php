@@ -65,4 +65,9 @@ interface TermContract
      * @return TermContract
      */
     public function updateMonthlyFee(float $monthlyFee): TermContract;
+
+    /**
+     * @return array
+     */
+    public function paymentCalendar(): array;
 }

@@ -46,6 +46,22 @@ interface AgreementContract
     public function pay(PaymentContract $payment): bool;
 
     /**
+     * @return PaymentContract
+     */
+    public function lastPayment(): PaymentContract;
+
+    /**
+     * @param \DateTime $date
+     * @return array
+     */
+    public function paymentsByMonthlyDeadline(\DateTime $deadlineDate): array;
+
+    /**
+     * @return float
+     */
+    public function totalPaid(): float;
+
+    /**
      * @param PaymentContract $payment
      * @return bool
      */
@@ -71,4 +87,9 @@ interface AgreementContract
      * @return bool
      */
     public function isAgreementPassed(): bool;
+
+    /**
+     * @return array
+     */
+    public function statements(): array;
 }

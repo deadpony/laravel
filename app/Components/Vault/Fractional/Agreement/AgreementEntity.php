@@ -2,6 +2,8 @@
 
 namespace App\Components\Vault\Fractional\Agreement;
 
+use App\Components\Vault\Fractional\Agreement\Calendar\CalendarVO;
+use App\Components\Vault\Fractional\Agreement\Statement\StatementVO;
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
 use App\Components\Vault\Outbound\Payment\PaymentContract;
 use App\Convention\ValueObjects\Identity\Identity;
@@ -143,7 +145,7 @@ class AgreementEntity implements AgreementContract
      */
     public function pay(PaymentContract $payment): bool
     {
-        $key = collect($this->payments->toArray())->search(function(PaymentContract $paidPayment) use ($payment) {
+        $key = collect($this->payments->toArray())->search(function (PaymentContract $paidPayment) use ($payment) {
             return $paidPayment->id()->equals($payment->id());
         });
 
@@ -155,12 +157,49 @@ class AgreementEntity implements AgreementContract
     }
 
     /**
+     * @return PaymentContract
+     */
+    public function lastPayment(): PaymentContract
+    {
+        return collect($this->payments->toArray())->sortByDesc(function (PaymentContract $paidPayment) {
+            return $paidPayment->createdAt();
+        })->first();
+    }
+
+    /**
+     * @param \DateTime $date
+     * @return array
+     */
+    public function paymentsByMonthlyDeadline(\DateTime $deadlineDate): array
+    {
+        return collect($this->payments->toArray())
+            ->sortByDesc(function (PaymentContract $paidPayment) {
+                return $paidPayment->createdAt();
+            })->reject(function (PaymentContract $paidPayment) use ($deadlineDate) {
+                return
+                    $paidPayment->createdAt() > $deadlineDate->setTime(23, 59, 59)
+                    ||
+                    $paidPayment->createdAt() < $deadlineDate->modify("first day of this month");
+            })->toArray();
+    }
+
+    /**
+     * @return float
+     */
+    public function totalPaid(): float
+    {
+        return collect($this->payments)->sum(function (PaymentContract $payment) {
+            return $payment->amount();
+        });
+    }
+
+    /**
      * @param PaymentContract $payment
      * @return bool
      */
     public function refund(PaymentContract $payment): bool
     {
-        $key = collect($this->payments->toArray())->search(function(PaymentContract $paidPayment) use ($payment) {
+        $key = collect($this->payments->toArray())->search(function (PaymentContract $paidPayment) use ($payment) {
             return $paidPayment->id()->equals($payment->id());
         });
 
@@ -204,8 +243,51 @@ class AgreementEntity implements AgreementContract
      */
     public function isAgreementPassed(): bool
     {
-        // TODO: Implement isAgreementPassed() method.
+        return $this->amount() === $this->totalPaid();
     }
 
+    /**
+     * @return array
+     */
+    public function statements(): array
+    {
+        $todayDate = new \DateTime('now');
+
+        $totalPaid = $this->totalPaid();
+
+        $lastPayment = $this->lastPayment();
+
+        $monthlyPayment = floatval($this->amount() / $this->term()->months());
+
+        return collect($this->term()->paymentCalendar())
+            ->map(function (CalendarVO $calendarDate) use ($todayDate, $lastPayment, $totalPaid, $monthlyPayment) {
+
+                $paymentsByMonth = $this->paymentsByMonthlyDeadline(new \DateTime($calendarDate->deadlineDate()));
+
+                $scheduledPayment = (new \DateTime($calendarDate->deadlineDate()) > $lastPayment->createdAt());
+
+                $overdue = function () use ($paymentsByMonth, $monthlyPayment) {
+                    return $monthlyPayment > collect($paymentsByMonth)->sum(function (PaymentContract $paidPayment) {
+                            return $paidPayment->amount();
+                        });
+                };
+
+                $overdue = $overdue();
+
+                $paidPayment = $monthlyPayment * $calendarDate->serialNumber() < $totalPaid && !$scheduledPayment;
+
+                return new StatementVO(
+                    $calendarDate,
+                    $paidPayment,
+                    !$scheduledPayment ? $overdue : false,
+                    $monthlyPayment,
+                    $scheduledPayment ? $monthlyPayment : max($monthlyPayment * $calendarDate->serialNumber() - $totalPaid,
+                        0),
+                    $this->amount() * $this->term()->monthlyFee(),
+                    $paymentsByMonth
+                );
+            })
+            ->toArray();
+    }
 
 }
