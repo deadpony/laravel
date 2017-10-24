@@ -30,6 +30,12 @@ interface PaymentRepositoryContract
      * @param PaymentContract $payment
      * @return PaymentContract
      */
+    public function register(PaymentContract &$payment): PaymentContract;
+
+    /**
+     * @param PaymentContract $payment
+     * @return PaymentContract
+     */
     public function persist(PaymentContract $payment): PaymentContract;
 
     /**

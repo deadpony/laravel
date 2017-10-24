@@ -90,11 +90,25 @@ class PaymentRepositoryDoctrine implements PaymentRepositoryContract
      * @param PaymentContract $payment
      * @return PaymentContract
      */
+    public function register(PaymentContract &$payment): PaymentContract
+    {
+        if (!$this->manager->contains($payment)) {
+            $payment = $this->manager->merge($payment);
+        }
+
+        return $payment;
+    }
+
+    /**
+     * @param PaymentContract $payment
+     * @return PaymentContract
+     */
     public function persist(PaymentContract $payment): PaymentContract
     {
-        $this->manager->persist($this->manager->merge($payment));
+        $this->register($payment);
+
+        $this->manager->persist($payment);
         $this->manager->flush();
-        $this->manager->clear();
 
         return $payment;
     }
@@ -108,7 +122,6 @@ class PaymentRepositoryDoctrine implements PaymentRepositoryContract
     {
         $this->manager->remove($this->manager->merge($payment));
         $this->manager->flush();
-        $this->manager->clear();
 
         return true;
     }

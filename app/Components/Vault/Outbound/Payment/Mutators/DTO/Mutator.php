@@ -4,11 +4,57 @@ namespace App\Components\Vault\Outbound\Payment\Mutators\DTO;
 
 use App\Components\Vault\Outbound\Payment\PaymentContract;
 use App\Components\Vault\Outbound\Payment\PaymentDTO;
+use App\Components\Vault\Outbound\Payment\Repositories\Exceptions\NotFoundException;
+use App\Components\Vault\Outbound\Payment\Repositories\PaymentRepositoryContract;
 use App\Convention\ValueObjects\Identity\Identity;
 use Illuminate\Support\Collection;
 
 class Mutator
 {
+    /**
+     * @var PaymentRepositoryContract
+     */
+    private $repository;
+
+    /**
+     * @var self|null
+     */
+    private static $instance;
+
+    /**
+     * @param PaymentRepositoryContract $repository
+     */
+    private function __construct(PaymentRepositoryContract $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    /**
+     *
+     */
+    private function __clone()
+    {
+    }
+
+    /**
+     *
+     */
+    private function __wakeup()
+    {
+    }
+
+    /**
+     * @return Mutator
+     */
+    public static function getInstance()
+    {
+        if (!self::$instance instanceof self) {
+            self::$instance = new self(app()->make(PaymentRepositoryContract::class));
+        }
+
+        return self::$instance;
+    }
+
     /**
      * @param Collection $collection
      * @return Collection
@@ -23,7 +69,15 @@ class Mutator
      */
     public static function fromDTO(PaymentDTO $dto): PaymentContract
     {
-        return app()->make(PaymentContract::class, self::generateIdentity(collect($dto->toArray()))->toArray());
+        try {
+            $entity = self::getInstance()->repository->byIdentity(self::generateIdentity(collect($dto->toArray()))->get('id'));
+        } catch (NotFoundException $ex) {
+            $entity = app()->make(PaymentContract::class, self::generateIdentity(collect($dto->toArray()))->toArray());
+
+            self::getInstance()->repository->register($entity);
+        }
+
+        return $entity;
     }
 
     /**
