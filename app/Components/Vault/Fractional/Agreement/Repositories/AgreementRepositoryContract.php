@@ -30,6 +30,12 @@ interface AgreementRepositoryContract
      * @param AgreementContract $agreement
      * @return AgreementContract
      */
+    public function register(AgreementContract &$agreement): AgreementContract;
+
+    /**
+     * @param AgreementContract $agreement
+     * @return AgreementContract
+     */
     public function persist(AgreementContract $agreement): AgreementContract;
 
     /**

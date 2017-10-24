@@ -121,7 +121,9 @@ class PaymentRepositoryDoctrine implements PaymentRepositoryContract
      */
     public function destroy(PaymentContract $payment): bool
     {
-        $this->manager->remove($this->manager->merge($payment));
+        $this->register($payment);
+
+        $this->manager->remove($payment);
         $this->manager->flush();
 
         return true;

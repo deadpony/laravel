@@ -4,21 +4,55 @@ namespace App\Components\Vault\Fractional\Agreement\Mutators\DTO;
 
 use App\Components\Vault\Fractional\Agreement\AgreementContract;
 use App\Components\Vault\Fractional\Agreement\AgreementDTO;
-use App\Components\Vault\Fractional\Agreement\Term\TermContract;
+use App\Components\Vault\Fractional\Agreement\Repositories\AgreementRepositoryContract;
 use App\Components\Vault\Fractional\Agreement\Term\TermDTO;
 use App\Components\Vault\Outbound\Payment\PaymentContract;
-use App\Components\Vault\Outbound\Payment\PaymentDTO;
 use App\Convention\ValueObjects\Identity\Identity;
-use Illuminate\Support\Collection;
 
 class Mutator
 {
     /**
-     * @param Collection $collection
-     * @return Collection
+     * @var AgreementRepositoryContract
      */
-    private static function generateIdentity(Collection $collection) {
-        return $collection->isEmpty() ? $collection : $collection->put('id', new Identity($collection->get('id')));
+    private $repository;
+
+    /**
+     * @var self|null
+     */
+    private static $instance;
+
+    /**
+     * @param AgreementRepositoryContract $repository
+     */
+    private function __construct(AgreementRepositoryContract $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    /**
+     *
+     */
+    private function __clone()
+    {
+    }
+
+    /**
+     *
+     */
+    private function __wakeup()
+    {
+    }
+
+    /**
+     * @return Mutator
+     */
+    public static function getInstance()
+    {
+        if (!self::$instance instanceof self) {
+            self::$instance = new self(app()->make(AgreementRepositoryContract::class));
+        }
+
+        return self::$instance;
     }
 
     /**
@@ -27,26 +61,8 @@ class Mutator
      */
     public static function fromDTO(AgreementDTO $dto): AgreementContract
     {
-        $aggRoot  = self::generateIdentity(collect($dto->toArray()));
-        $term     = self::generateIdentity(collect($aggRoot->pull('term', [])));
-        $payments = collect($aggRoot->pull('payments', []));
-
-        $agreement = app()->make(AgreementContract::class, $aggRoot->toArray());
-
-        if ($term->isNotEmpty()) {
-            $term->put('agreement', $agreement);
-            app()->make(TermContract::class, $term->toArray());
-        }
-
-        if ($payments->isNotEmpty()) {
-            $payments->each(function(PaymentDTO $paymentDTO) use ($agreement) {
-                $agreement->pay(\App\Components\Vault\Outbound\Payment\Mutators\DTO\Mutator::fromDTO($paymentDTO));
-            });
-        }
-
-        return $agreement;
+        return self::getInstance()->repository->byIdentity(new Identity($dto->id));
     }
-
 
     /**
      * @param AgreementContract $entity

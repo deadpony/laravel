@@ -88,11 +88,25 @@ class AgreementRepositoryDoctrine implements AgreementRepositoryContract
      * @param AgreementContract $agreement
      * @return AgreementContract
      */
+    public function register(AgreementContract &$agreement): AgreementContract
+    {
+        if (!$this->manager->contains($agreement)) {
+            $agreement = $this->manager->merge($agreement);
+        }
+
+        return $agreement;
+    }
+
+    /**
+     * @param AgreementContract $agreement
+     * @return AgreementContract
+     */
     public function persist(AgreementContract $agreement): AgreementContract
     {
-        $this->manager->persist($this->manager->merge($agreement));
+        $this->register($agreement);
+
+        $this->manager->persist($agreement);
         $this->manager->flush();
-        $this->manager->clear();
 
         return $agreement;
     }
@@ -104,9 +118,10 @@ class AgreementRepositoryDoctrine implements AgreementRepositoryContract
      */
     public function destroy(AgreementContract $agreement): bool
     {
-        $this->manager->remove($this->manager->merge($agreement));
+        $this->register($agreement);
+
+        $this->manager->remove($agreement);
         $this->manager->flush();
-        $this->manager->clear();
 
         return true;
     }

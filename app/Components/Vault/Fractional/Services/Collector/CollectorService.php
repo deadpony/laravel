@@ -53,15 +53,6 @@ class CollectorService implements CollectorServiceContract
     }
 
     /**
-     * @param AgreementContract $entity
-     * @return AgreementDTO
-     */
-    private function toDTO(AgreementContract $entity): AgreementDTO
-    {
-        return Mutator::toDTO($entity);
-    }
-
-    /**
      * @param float $amount
      * @return AgreementDTO
      */
@@ -76,7 +67,7 @@ class CollectorService implements CollectorServiceContract
 
         $this->repository->persist($agreement);
 
-        return $this->toDTO($agreement);
+        return Mutator::toDTO($agreement);
     }
 
     /**
@@ -94,7 +85,7 @@ class CollectorService implements CollectorServiceContract
 
         $this->repository->persist($agreement);
 
-        return $this->toDTO($agreement);
+        return Mutator::toDTO($agreement);
     }
 
     /**
@@ -118,7 +109,7 @@ class CollectorService implements CollectorServiceContract
     {
         $agreement = $this->repository->byIdentity(new Identity($identity));
 
-        return $this->toDTO($agreement);
+        return Mutator::toDTO($agreement);
     }
 
     /**
