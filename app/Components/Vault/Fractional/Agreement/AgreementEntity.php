@@ -2,8 +2,8 @@
 
 namespace App\Components\Vault\Fractional\Agreement;
 
-use App\Components\Vault\Fractional\Agreement\Calendar\CalendarVO;
-use App\Components\Vault\Fractional\Agreement\Statement\StatementVO;
+use App\Components\Vault\Fractional\Agreement\Calendar\CalendarImmutable;
+use App\Components\Vault\Fractional\Agreement\Statement\StatementImmutable;
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
 use App\Components\Vault\Outbound\Payment\PaymentContract;
 use App\Convention\ValueObjects\Identity\Identity;
@@ -101,9 +101,9 @@ class AgreementEntity implements AgreementContract
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return \DateTime
      */
-    public function createdAt(): \DateTimeInterface
+    public function createdAt(): \DateTime
     {
         return $this->createdAt;
     }
@@ -145,9 +145,10 @@ class AgreementEntity implements AgreementContract
      */
     public function pay(PaymentContract $payment): bool
     {
-        $key = collect($this->payments->toArray())->search(function (PaymentContract $paidPayment) use ($payment) {
-            return $paidPayment->id()->equals($payment->id());
-        });
+        $key = collect($this->payments->toArray())
+            ->search(function (PaymentContract $paidPayment) use ($payment) {
+                return $paidPayment->id()->equals($payment->id());
+            });
 
         if ($key === false) {
             $this->payments->add($payment);
@@ -161,34 +162,68 @@ class AgreementEntity implements AgreementContract
      */
     public function lastPayment(): PaymentContract
     {
-        return collect($this->payments->toArray())->sortByDesc(function (PaymentContract $paidPayment) {
-            return $paidPayment->createdAt();
-        })->first();
+        return collect($this->payments->toArray())
+            ->sortByDesc(function (PaymentContract $paidPayment) {
+                return $paidPayment->createdAt();
+            })->first();
     }
 
     /**
-     * @param \DateTime $date
+     * @param CalendarImmutable $date
      * @return array
      */
-    public function paymentsByMonthlyDeadline(\DateTime $deadlineDate): array
+    public function paymentsByMonthlyDeadline(CalendarImmutable $deadlineDate): array
+    {
+        return collect($this->payments->toArray())
+            ->sortByDesc(function (PaymentContract $paidPayment) {
+                return $paidPayment->createdAt();
+            })->reject(function (PaymentContract $paidPayment) use ($deadlineDate) {
+                return !$deadlineDate->inRange($paidPayment->createdAt());
+            })->toArray();
+    }
+
+    /**
+     * @param CalendarImmutable $date
+     * @return array
+     */
+    public function paymentsByBoundaryDeadline(CalendarImmutable $deadlineDate): array
+    {
+        return collect($this->payments->toArray())
+            ->sortByDesc(function (PaymentContract $paidPayment) {
+                return $paidPayment->createdAt();
+            })->reject(function (PaymentContract $paidPayment) use ($deadlineDate) {
+
+                return
+                    $paidPayment->createdAt()->getTimestamp() > $deadlineDate->deadlineTimestamp()
+                    ||
+                    $paidPayment->createdAt()->getTimestamp() < $this->term()->firstPaymentDeadlineDate()->beginningTimestamp();
+            })->toArray();
+    }
+
+    /**
+     * @param CalendarImmutable $date
+     * @return array
+     */
+    public function paymentsByBoundaryBeginning(CalendarImmutable $deadlineDate): array
     {
         return collect($this->payments->toArray())
             ->sortByDesc(function (PaymentContract $paidPayment) {
                 return $paidPayment->createdAt();
             })->reject(function (PaymentContract $paidPayment) use ($deadlineDate) {
                 return
-                    $paidPayment->createdAt() > $deadlineDate->setTime(23, 59, 59)
+                    $paidPayment->createdAt()->getTimestamp() > $deadlineDate->beginningTimestamp()
                     ||
-                    $paidPayment->createdAt() < $deadlineDate->modify("first day of this month");
+                    $paidPayment->createdAt()->getTimestamp() < $this->term()->firstPaymentDeadlineDate()->beginningTimestamp();
             })->toArray();
     }
 
     /**
+     * @param array $payments
      * @return float
      */
-    public function totalPaid(): float
+    public function totalPaid(array $payments = []): float
     {
-        return collect($this->payments)->sum(function (PaymentContract $payment) {
+        return collect($payments ?? $this->payments)->sum(function (PaymentContract $payment) {
             return $payment->amount();
         });
     }
@@ -210,7 +245,6 @@ class AgreementEntity implements AgreementContract
         return true;
     }
 
-
     /**
      * @param float $amount
      * @return AgreementContract
@@ -223,19 +257,68 @@ class AgreementEntity implements AgreementContract
     }
 
     /**
-     * @return bool
+     * @return float
      */
-    public function isDeadlineReached(): bool
+    public function basePayment(): float
     {
-        // TODO: Implement isDeadlineReached() method.
+        return floatval($this->amount() / $this->term()->months());
     }
 
     /**
+     * @param CalendarImmutable $calendarDeadlineDate
+     * @return float
+     */
+    public function definedPayment(CalendarImmutable $calendarDeadlineDate): float
+    {
+        $shouldBePaidUntilDeadline = $this->basePayment() * $this->term()->getCalendarDeadlineSerial($calendarDeadlineDate);
+        $totalPaidUntilDeadline = $this->totalPaid($this->paymentsByBoundaryDeadline($calendarDeadlineDate));
+
+        $difference = max(($this->amount() - $shouldBePaidUntilDeadline - $totalPaidUntilDeadline) + $this->basePayment(),
+            0);
+
+        return $difference > $this->basePayment() ? $this->basePayment() : $difference;
+    }
+
+    /**
+     * @param CalendarImmutable $calendarDeadlineDate
+     * @return float
+     */
+    public function leftoverPayment(CalendarImmutable $calendarDeadlineDate): float
+    {
+        // todo: correct leftover
+        return 0.00;
+    }
+
+    /**
+     * @param CalendarImmutable $calendarDeadlineDate
+     * @return float
+     */
+    public function overdraftPayment(CalendarImmutable $calendarDeadlineDate): float
+    {
+        return max($this->definedPayment($calendarDeadlineDate) - $this->totalPaid($this->paymentsByMonthlyDeadline($calendarDeadlineDate)),
+            0);
+    }
+
+    /**
+     * @param CalendarImmutable $calendarDeadlineDate
      * @return bool
      */
-    public function isDeadlinePassed(): bool
+    public function isDeadlineReached(CalendarImmutable $calendarDeadlineDate): bool
     {
-        // TODO: Implement isDeadlinePassed() method.
+        return (new \DateTime())->getTimestamp() > $calendarDeadlineDate->deadlineTimestamp();
+    }
+
+    /**
+     * @param CalendarImmutable $calendarDeadlineDate
+     * @return bool
+     */
+    public function isDeadlinePassed(CalendarImmutable $calendarDeadlineDate): bool
+    {
+        if (!$this->isDeadlineReached($calendarDeadlineDate)) {
+            return true;
+        }
+
+        return $this->overdraftPayment($calendarDeadlineDate) === 0.0;
     }
 
     /**
@@ -251,40 +334,18 @@ class AgreementEntity implements AgreementContract
      */
     public function statements(): array
     {
-        $todayDate = new \DateTime('now');
+        $calendar = $this->term()->getCalendarScheduledDates();
 
-        $totalPaid = $this->totalPaid();
-
-        $lastPayment = $this->lastPayment();
-
-        $monthlyPayment = floatval($this->amount() / $this->term()->months());
-
-        return collect($this->term()->paymentCalendar())
-            ->map(function (CalendarVO $calendarDate) use ($todayDate, $lastPayment, $totalPaid, $monthlyPayment) {
-
-                $paymentsByMonth = $this->paymentsByMonthlyDeadline(new \DateTime($calendarDate->deadlineDate()));
-
-                $scheduledPayment = (new \DateTime($calendarDate->deadlineDate()) > $lastPayment->createdAt());
-
-                $overdue = function () use ($paymentsByMonth, $monthlyPayment) {
-                    return $monthlyPayment > collect($paymentsByMonth)->sum(function (PaymentContract $paidPayment) {
-                            return $paidPayment->amount();
-                        });
-                };
-
-                $overdue = $overdue();
-
-                $paidPayment = $monthlyPayment * $calendarDate->serialNumber() < $totalPaid && !$scheduledPayment;
-
-                return new StatementVO(
-                    $calendarDate,
-                    $paidPayment,
-                    !$scheduledPayment ? $overdue : false,
-                    $monthlyPayment,
-                    $scheduledPayment ? $monthlyPayment : max($monthlyPayment * $calendarDate->serialNumber() - $totalPaid,
-                        0),
-                    $this->amount() * $this->term()->monthlyFee(),
-                    $paymentsByMonth
+        return collect($calendar)
+            ->map(function (CalendarImmutable $calendarScheduledDeadline) {
+                return new StatementImmutable(
+                    $calendarScheduledDeadline,
+                    $this->basePayment(),
+                    $this->definedPayment($calendarScheduledDeadline),
+                    $this->leftoverPayment($calendarScheduledDeadline),
+                    !$this->isDeadlinePassed($calendarScheduledDeadline),
+                    $this->term()->monthlyFee(),
+                    []
                 );
             })
             ->toArray();

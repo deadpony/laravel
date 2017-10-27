@@ -32,7 +32,7 @@ class PaymentEntity implements PaymentContract
     private $amount;
 
     /**
-     * @var \DateTimeInterface
+     * @var \DateTime
      * @ORM\Column(type="datetime",nullable=false,name="created_at")
      */
     private $createdAt;
@@ -103,9 +103,9 @@ class PaymentEntity implements PaymentContract
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return \DateTime
      */
-    public function createdAt(): \DateTimeInterface
+    public function createdAt(): \DateTime
     {
         return $this->createdAt;
     }

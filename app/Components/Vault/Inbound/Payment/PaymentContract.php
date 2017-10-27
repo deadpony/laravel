@@ -22,9 +22,9 @@ interface PaymentContract
     public function amount(): float;
 
     /**
-     * @return \DateTimeInterface
+     * @return \DateTime
      */
-    public function createdAt(): \DateTimeInterface;
+    public function createdAt(): \DateTime;
 
     /**
      * @param float $amount

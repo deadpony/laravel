@@ -25,12 +25,6 @@ interface WardenServiceContract
      * @param AgreementDTO $agreementDTO
      * @return bool
      */
-    public function isDeadlineReached(AgreementDTO $agreementDTO): bool;
-
-    /**
-     * @param AgreementDTO $agreementDTO
-     * @return bool
-     */
     public function isDeadlinePassed(AgreementDTO $agreementDTO): bool;
 
     /**

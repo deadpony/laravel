@@ -108,6 +108,7 @@ class CollectorService implements CollectorServiceContract
     public function view(string $identity): AgreementDTO
     {
         $agreement = $this->repository->byIdentity(new Identity($identity));
+        dd($agreement->statements());
 
         return Mutator::toDTO($agreement);
     }

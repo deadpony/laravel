@@ -3,6 +3,7 @@
 namespace App\Components\Vault\Fractional\Agreement;
 
 use App\Components\Vault\Fractional\Agreement\Term\TermContract;
+use App\Components\Vault\Fractional\Agreement\Calendar\CalendarImmutable;
 use App\Components\Vault\Outbound\Payment\PaymentContract;
 use App\Convention\ValueObjects\Identity\Identity;
 
@@ -19,9 +20,9 @@ interface AgreementContract
     public function amount(): float;
 
     /**
-     * @return \DateTimeInterface
+     * @return \DateTime
      */
-    public function createdAt(): \DateTimeInterface;
+    public function createdAt(): \DateTime;
 
     /**
      * @return TermContract|null
@@ -51,15 +52,28 @@ interface AgreementContract
     public function lastPayment(): PaymentContract;
 
     /**
-     * @param \DateTime $date
+     * @param CalendarImmutable $date
      * @return array
      */
-    public function paymentsByMonthlyDeadline(\DateTime $deadlineDate): array;
+    public function paymentsByMonthlyDeadline(CalendarImmutable $deadlineDate): array;
 
     /**
+     * @param CalendarImmutable $date
+     * @return array
+     */
+    public function paymentsByBoundaryDeadline(CalendarImmutable $deadlineDate): array;
+
+    /**
+     * @param CalendarImmutable $date
+     * @return array
+     */
+    public function paymentsByBoundaryBeginning(CalendarImmutable $deadlineDate): array;
+
+    /**
+     * @param array $payments
      * @return float
      */
-    public function totalPaid(): float;
+    public function totalPaid(array $payments = []): float;
 
     /**
      * @param PaymentContract $payment
@@ -74,14 +88,39 @@ interface AgreementContract
     public function updateAmount(float $amount): AgreementContract;
 
     /**
-     * @return bool
+     * @return float
      */
-    public function isDeadlineReached(): bool;
+    public function basePayment(): float;
 
     /**
+     * @param CalendarImmutable $calendarDeadlineDate
+     * @return float
+     */
+    public function definedPayment(CalendarImmutable $calendarDeadlineDate): float;
+
+    /**
+     * @param CalendarImmutable $calendarDeadlineDate
+     * @return float
+     */
+    public function leftoverPayment(CalendarImmutable $calendarDeadlineDate): float;
+
+    /**
+     * @param CalendarImmutable $calendarDeadlineDate
+     * @return float
+     */
+    public function overdraftPayment(CalendarImmutable $calendarDeadlineDate): float;
+
+    /**
+     * @param CalendarImmutable $calendarDeadlineDate
      * @return bool
      */
-    public function isDeadlinePassed(): bool;
+    public function isDeadlineReached(CalendarImmutable $calendarDeadlineDate): bool;
+
+    /**
+     * @param CalendarImmutable $calendarDeadlineDate
+     * @return bool
+     */
+    public function isDeadlinePassed(CalendarImmutable $calendarDeadlineDate): bool;
 
     /**
      * @return bool

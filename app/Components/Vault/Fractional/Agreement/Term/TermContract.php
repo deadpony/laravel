@@ -4,6 +4,7 @@ namespace App\Components\Vault\Fractional\Agreement\Term;
 
 use App\Components\Vault\Fractional\Agreement\AgreementContract;
 use App\Convention\ValueObjects\Identity\Identity;
+use App\Components\Vault\Fractional\Agreement\Calendar\CalendarImmutable;
 
 interface TermContract
 {
@@ -33,9 +34,9 @@ interface TermContract
     public function monthlyFee(): float;
 
     /**
-     * @return \DateTimeInterface
+     * @return \DateTime
      */
-    public function createdAt(): \DateTimeInterface;
+    public function createdAt(): \DateTime;
 
     /**
      * @return AgreementContract
@@ -67,7 +68,29 @@ interface TermContract
     public function updateMonthlyFee(float $monthlyFee): TermContract;
 
     /**
+     * @return CalendarImmutable
+     */
+    public function firstPaymentDeadlineDate(): CalendarImmutable;
+
+    /**
+     * @return CalendarImmutable
+     */
+    public function lastPaymentDeadlineDate(): CalendarImmutable;
+
+    /**
+     * @param \DateTime $date
+     * @return CalendarImmutable
+     */
+    public function getCalendarDeadlineDateByDate(\DateTime $date): CalendarImmutable;
+
+    /**
      * @return array
      */
-    public function paymentCalendar(): array;
+    public function getCalendarScheduledDates(): array;
+
+    /**
+     * @param CalendarImmutable $calendarDeadline
+     * @return int
+     */
+    public function getCalendarDeadlineSerial(CalendarImmutable $calendarDeadline): int;
 }

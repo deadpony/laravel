@@ -59,17 +59,6 @@ class WardenService implements WardenServiceContract
      * @param AgreementDTO $agreementDTO
      * @return bool
      */
-    public function isDeadlineReached(AgreementDTO $agreementDTO): bool
-    {
-        $agreement = AgreementMutator::fromDTO($agreementDTO);
-
-        return $agreement->isDeadlineReached();
-    }
-
-    /**
-     * @param AgreementDTO $agreementDTO
-     * @return bool
-     */
     public function isDeadlinePassed(AgreementDTO $agreementDTO): bool
     {
         $agreement = AgreementMutator::fromDTO($agreementDTO);

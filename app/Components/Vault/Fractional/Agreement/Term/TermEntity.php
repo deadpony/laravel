@@ -3,7 +3,7 @@
 namespace App\Components\Vault\Fractional\Agreement\Term;
 
 use App\Components\Vault\Fractional\Agreement\AgreementContract;
-use App\Components\Vault\Fractional\Agreement\Calendar\CalendarVO;
+use App\Components\Vault\Fractional\Agreement\Calendar\CalendarImmutable;
 use App\Convention\ValueObjects\Identity\Identity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -67,8 +67,14 @@ class TermEntity implements TermContract
      * @param float $monthlyFee
      * @param AgreementContract $agreement
      */
-    public function __construct(Identity $id, int $months, int $deadlineDay, float $setupFee, float $monthlyFee, AgreementContract $agreement)
-    {
+    public function __construct(
+        Identity $id,
+        int $months,
+        int $deadlineDay,
+        float $setupFee,
+        float $monthlyFee,
+        AgreementContract $agreement
+    ) {
         $this->id = $id;
 
         $this->createdAt = new \DateTimeImmutable();
@@ -114,7 +120,7 @@ class TermEntity implements TermContract
             throw new \InvalidArgumentException("Deadline date can't be greater than 31 day of month");
         }
 
-        if ((int) $this->createdAt()->format('j') > $day) {
+        if ((int)$this->createdAt()->format('j') > $day) {
             throw new \InvalidArgumentException("Deadline date can't be in past. Agreement date is {$this->createdAt()->format('d M')}");
         }
 
@@ -163,11 +169,10 @@ class TermEntity implements TermContract
         return $this->monthlyFee;
     }
 
-
     /**
-     * @return \DateTimeInterface
+     * @return \DateTime
      */
-    public function createdAt(): \DateTimeInterface
+    public function createdAt(): \DateTime
     {
         return $this->createdAt;
     }
@@ -225,25 +230,61 @@ class TermEntity implements TermContract
     }
 
     /**
+     * @return CalendarImmutable
+     */
+    public function firstPaymentDeadlineDate(): CalendarImmutable
+    {
+        return new CalendarImmutable($this->createdAt(), $this->deadlineDay());
+    }
+
+    /**
+     * @return CalendarImmutable
+     */
+    public function lastPaymentDeadlineDate(): CalendarImmutable
+    {
+        $firstPaymentDeadline = new \DateTime((string)$this->firstPaymentDeadlineDate());
+        $firstPaymentDeadline->modify("+ {$this->months()} month");
+        $firstPaymentDeadline->modify("- 1 month");
+        return new CalendarImmutable($firstPaymentDeadline, $this->deadlineDay());
+    }
+
+    /**
+     * @param \DateTime $date
+     * @return CalendarImmutable
+     */
+    public function getCalendarDeadlineDateByDate(\DateTime $date): CalendarImmutable
+    {
+        $calendarDeadline = new CalendarImmutable($date, $this->deadlineDay());
+
+        if ($calendarDeadline->lt($this->firstPaymentDeadlineDate()) || $calendarDeadline->gt($this->lastPaymentDeadlineDate())) {
+            throw new \InvalidArgumentException("Date is out of range between first and last payments dates");
+        }
+
+        return $calendarDeadline;
+    }
+
+    /**
      * @return array
      */
-    public function paymentCalendar(): array
+    public function getCalendarScheduledDates(): array
     {
-        return collect(range(1, $this->months()))
-            ->map(function(int $monthNumber) {
+        $firstDeadlineDate = new \DateTime($this->firstPaymentDeadlineDate()->deadlineDate());
+        $lastDeadlineDate = new \DateTime($this->lastPaymentDeadlineDate()->deadlineDate());
+        $lastDeadlineDate->modify("+1 month");
 
-                $monthNumber--;
+        return collect(new \DatePeriod($firstDeadlineDate, new \DateInterval("P1M"), $lastDeadlineDate))->map(function (
+            \DateTime $date
+        ) {
+            return $this->getCalendarDeadlineDateByDate($date);
+        })->toArray();
+    }
 
-                $monthDeadlineDate = (new \DateTime($this->createdAt()->format('Y-m-d')))
-                    ->modify("first day of this month")
-                    ->modify("+ {$monthNumber} month")
-                    ->modify("+ {$this->deadlineDay()} day")
-                    ->modify("- 1 day");
-
-                $monthNumber++;
-
-                return new CalendarVO($monthNumber, $monthDeadlineDate);
-            })
-            ->toArray();
+    /**
+     * @param CalendarImmutable $calendarDeadline
+     * @return int
+     */
+    public function getCalendarDeadlineSerial(CalendarImmutable $calendarDeadline): int
+    {
+        return $calendarDeadline->diffDeadlineMonths($this->firstPaymentDeadlineDate());
     }
 }
